@@ -1,13 +1,15 @@
 services:
   postgres:
+    container_name: 'db'
     image: 'postgres:latest'
     environment:
-      - 'POSTGRES_DB=mydatabase'
+      - 'POSTGRES_DB=db'
       - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      - 'POSTGRES_USER=admin'
     ports:
-      - '5432'
+      - "5432:5432"
   redis:
+    container_name: 'sessions-map'
     image: 'redis:latest'
     ports:
-      - '6379'
+      - '6379:6379'
