@@ -8,7 +8,3 @@ spring:
       ddl-auto: create-drop
     show-sql: true
 
-  security:
-    user:
-      password: "secret"
-      name: "admin"

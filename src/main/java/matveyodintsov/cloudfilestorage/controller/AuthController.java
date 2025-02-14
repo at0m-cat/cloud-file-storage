@@ -1,12 +1,16 @@
 package matveyodintsov.cloudfilestorage.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import matveyodintsov.cloudfilestorage.dto.UserLoginDto;
 import matveyodintsov.cloudfilestorage.dto.UserRegisterDto;
 import matveyodintsov.cloudfilestorage.models.UserEntity;
 import matveyodintsov.cloudfilestorage.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +31,16 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody UserLoginDto loginDto) {
+        String login = loginDto.getLogin();
+        String password = loginDto.getPassword();
+        Authentication authentication =
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, password));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return ResponseEntity.ok().body("Login successful");
     }
 
     @PostMapping("/register")

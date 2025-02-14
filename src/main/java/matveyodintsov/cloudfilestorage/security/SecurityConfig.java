@@ -31,29 +31,13 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .requestMatchers("/api/auth/register").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();
 
         return http.build();
     }
-
-//    @Bean
-//    public UserDetailsService users() {
-//        UserDetails admin = User.builder()
-//                .username("admin")
-//                .password("password")
-//                .build();
-//
-//        UserDetails user = User.builder()
-//                .username("user")
-//                .password("password")
-//                .roles("USER")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(admin, user);
-//    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
