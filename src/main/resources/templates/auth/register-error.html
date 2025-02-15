@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atom Cloud - Ошибка регистрации</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="error-container">
+    <h2>Ошибка регистрации</h2>
+    <p>Этот логин уже занят. Попробуйте другой.</p>
+    <button onclick="window.location.href='/auth/register'">Попробовать снова</button>
+    <p>Уже есть аккаунт? <a href="/auth/login">Войти</a></p>
+</div>
+
+</body>
+</html>

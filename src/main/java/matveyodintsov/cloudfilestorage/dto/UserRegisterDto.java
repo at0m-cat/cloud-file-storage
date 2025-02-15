@@ -1,5 +1,6 @@
 package matveyodintsov.cloudfilestorage.dto;
 
+import jakarta.validation.Valid;
 import lombok.*;
 
 @Data
@@ -9,7 +10,9 @@ import lombok.*;
 @Setter
 public class UserRegisterDto {
 
+    @Valid
     private String login;
+    @Valid
     private String password;
 
 }

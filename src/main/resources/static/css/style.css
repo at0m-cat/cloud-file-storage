@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap');
+
+:root {
+    --primary-color: #0071e3;
+    --primary-hover: #005bb5;
+    --bg-light: #f6f6f6;
+    --bg-dark: #1e1e1e;
+    --text-light: #333;
+    --text-dark: #f6f6f6;
+    --container-bg: #ffffff;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --transition-speed: 0.3s;
+}
+
+/*@media (prefers-color-scheme: dark) {*/
+/*    :root {*/
+/*        --bg-light: #121212;*/
+/*        --text-light: #ffffff;*/
+/*        --container-bg: #1e1e1e;*/
+/*        --shadow: rgba(255, 255, 255, 0.1);*/
+/*    }*/
+/*}*/
+
+body {
+    font-family: 'SF Pro Display', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+.container {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.form-container, .success-container, .error-container {
+    background: var(--container-bg);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px var(--shadow);
+    width: 90%;
+    max-width: 400px;
+    margin: 100px auto;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.logo, .success-icon, .error-icon {
+    width: 60px;
+    margin-bottom: 15px;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--text-light);
+}
+
+p {
+    font-size: 15px;
+    color: var(--text-light);
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    background: #fff;
+    transition: border-color var(--transition-speed);
+}
+
+input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: var(--primary-color);
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background var(--transition-speed), transform var(--transition-speed);
+}
+
+button:hover {
+    background: var(--primary-hover);
+    transform: scale(1.02);
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color var(--transition-speed);
+}
+
+a:hover {
+    text-decoration: underline;
+    color: var(--primary-hover);
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    .form-container, .success-container, .error-container {
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    input, button {
+        font-size: 14px;
+    }
+}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atom Cloud - Регистрация</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <div class="form-container">
+        <form id="registerForm" th:action="@{/auth/register}" th:method="post" th:object="${user}">
+            <h2>Создать Atom Cloud ID</h2>
+            <input type="text" id="register-username" th:field="*{login}" placeholder="Введите логин" required>
+            <input type="password" id="register-password" th:field="*{password}" placeholder="Введите пароль" required>
+            <button type="submit">Зарегистрироваться</button>
+            <p>Уже есть аккаунт? <a onclick="window.location.href='/auth/login'" id="login-redirect">Войти</a></p>
+        </form>
+    </div>
+</div>
+</body>
+</html>
