@@ -1,8 +1,6 @@
 package matveyodintsov.cloudfilestorage.service;
 
-import io.minio.GetPresignedObjectUrlArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
 import io.minio.errors.MinioException;
 import io.minio.http.Method;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +29,10 @@ public class FileService {
         String fileName = file.getOriginalFilename();
         if (fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException("Файл должен иметь имя!");
+        }
+
+        if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build())) {
+            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
         }
 
         try (InputStream inputStream = file.getInputStream()) {
