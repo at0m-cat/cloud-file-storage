@@ -1,4 +1,7 @@
 spring:
+  session:
+    redis:
+      flush-mode: on_save
   application:
     name: 'cloud-file-storage'
   liquibase:
