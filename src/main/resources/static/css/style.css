@@ -3,34 +3,36 @@
 :root {
     --primary-color: #0071e3;
     --primary-hover: #005bb5;
-    --bg-light: #f6f6f6;
-    --bg-dark: #1e1e1e;
-    --text-light: #333;
-    --text-dark: #f6f6f6;
+    --bg-color: #f9f9f9;
+    --text-color: #333;
     --container-bg: #ffffff;
-    --shadow: rgba(0, 0, 0, 0.1);
+    --border-color: #ddd;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --radius: 12px;
     --transition-speed: 0.3s;
 }
 
-/*@media (prefers-color-scheme: dark) {*/
-/*    :root {*/
-/*        --bg-light: #121212;*/
-/*        --text-light: #ffffff;*/
-/*        --container-bg: #1e1e1e;*/
-/*        --shadow: rgba(255, 255, 255, 0.1);*/
-/*    }*/
-/*}*/
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 body {
     font-family: 'SF Pro Display', sans-serif;
-    background-color: var(--bg-light);
-    color: var(--text-light);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    width: 100%;
+    min-height: 100vh;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
-    margin: 0;
     transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+.body-auth {
+    justify-content: center;
+    padding: 20px;
 }
 
 .container {
@@ -42,11 +44,11 @@ body {
 .form-container, .success-container, .error-container {
     background: var(--container-bg);
     padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px var(--shadow);
-    width: 90%;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    width: 100%;
     max-width: 400px;
-    margin: 100px auto;
+    margin: 20px auto;
     animation: fadeIn 0.5s ease-in-out;
 }
 
@@ -70,20 +72,20 @@ h2 {
     font-size: 24px;
     font-weight: 600;
     margin-bottom: 15px;
-    color: var(--text-light);
+    color: var(--text-color);
 }
 
 p {
     font-size: 15px;
-    color: var(--text-light);
+    color: var(--text-color);
 }
 
 input {
     width: 100%;
     padding: 12px;
     margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
     font-size: 16px;
     background: #fff;
     transition: border-color var(--transition-speed);
@@ -100,8 +102,9 @@ button {
     background: var(--primary-color);
     color: white;
     font-size: 16px;
+    margin-bottom: 15px;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius);
     cursor: pointer;
     transition: background var(--transition-speed), transform var(--transition-speed);
 }
@@ -122,8 +125,114 @@ a:hover {
     color: var(--primary-hover);
 }
 
-.hidden {
-    display: none;
+.dashboard-header {
+    background: var(--container-bg);
+    width: 100%;
+    max-width: 1200px;
+    padding: 15px 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.dashboard-header h1 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-info span {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.logout-btn {
+    padding: 8px 14px;
+    background: var(--primary-color);
+    color: white;
+    font-size: 14px;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background var(--transition-speed), transform var(--transition-speed);
+}
+
+.logout-btn:hover {
+    background: var(--primary-hover);
+    transform: scale(1.05);
+}
+
+.dashboard-content {
+    text-align: center;
+    width: 100%;
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 25px;
+    background: var(--container-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.dashboard-content h2 {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.dashboard-content p {
+    font-size: 16px;
+    color: var(--text-color);
+    margin-bottom: 20px;
+}
+
+.upload-btn {
+    padding: 12px 20px;
+    background: var(--primary-color);
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background var(--transition-speed), transform var(--transition-speed);
+}
+
+.upload-btn:hover {
+    background: var(--primary-hover);
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .dashboard-content {
+        max-width: 90%;
+        padding: 20px;
+    }
+
+    .dashboard-content h2 {
+        font-size: 22px;
+    }
+
+    .dashboard-content p {
+        font-size: 14px;
+    }
+
+    .upload-btn {
+        font-size: 14px;
+    }
 }
 
 @media (max-width: 480px) {

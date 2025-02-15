@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -8,12 +8,22 @@
 </head>
 <body>
 
-<main>
-    <header>
-        <h1>Atom Cloud - dashboard</h1>
-        <h1 th:text ="${user}">Login</h1>
+<header class="dashboard-header">
+    <h1>Atom Cloud</h1>
+    <div class="user-info" th:if="${user}">
+        <span th:text="${user}">Гость</span>
+        <button class="logout-btn" onclick="window.location.href='/auth/logout'">Выйти</button>
+    </div>
+    <div class="user-info" th:unless="${user}">
+        <span>Гость</span>
+        <button class="logout-btn" onclick="window.location.href='/auth/login'">Войти</button>
+    </div>
+</header>
 
-    </header>
+<main th:if="${user}" class="dashboard-content">
+    <h2>Добро пожаловать, <span th:text="${user}">Пользователь</span>!</h2>
+    <p>Ваше облачное хранилище готово к работе.</p>
+    <button class="upload-btn">Загрузить файлы</button>
 </main>
 
 </body>
