@@ -6,6 +6,7 @@ services:
     container_name: minio_container
     ports:
       - "9000:9000"
+      - "9001:9001"
     environment:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123
@@ -14,6 +15,7 @@ services:
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
+    restart: unless-stopped
     networks:
       - cloud_net
 
