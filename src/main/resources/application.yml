@@ -5,9 +5,10 @@ spring:
   application:
     name: 'cloud-file-storage'
   liquibase:
-    enabled: false
+    enabled: true
+    change-log: classpath:db/changelog/001-create-users-table.xml
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
 

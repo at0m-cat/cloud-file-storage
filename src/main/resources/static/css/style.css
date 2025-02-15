@@ -76,6 +76,7 @@ h2 {
 }
 
 p {
+    margin-bottom: 15px;
     font-size: 15px;
     color: var(--text-color);
 }
