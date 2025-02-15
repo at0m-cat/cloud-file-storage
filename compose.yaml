@@ -1,4 +1,22 @@
+version: '3.8'
+
 services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio_container
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - cloud_net
+
   postgres:
     container_name: 'db'
     image: 'postgres:latest'
@@ -8,8 +26,20 @@ services:
       - 'POSTGRES_USER=admin'
     ports:
       - "5432:5432"
+    networks:
+      - cloud_net
+
   redis:
     container_name: 'sessions-map'
     image: 'redis:latest'
     ports:
       - '6379:6379'
+    networks:
+      - cloud_net
+
+volumes:
+  minio_data:
+
+networks:
+  cloud_net:
+    driver: bridge
