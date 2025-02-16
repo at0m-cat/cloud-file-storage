@@ -1,8 +1,9 @@
-package matveyodintsov.cloudfilestorage.service;
+package matveyodintsov.cloudfilestorage.service.impl;
 
 import matveyodintsov.cloudfilestorage.dto.UserRegisterDto;
 import matveyodintsov.cloudfilestorage.models.UserEntity;
 import matveyodintsov.cloudfilestorage.repository.UserRepository;
+import matveyodintsov.cloudfilestorage.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

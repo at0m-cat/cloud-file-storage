@@ -15,9 +15,7 @@ spring:
 minio:
   server:
     url: http://localhost:9000
-    access-key: minio
-    secret-key: minio123
-  bucket:
-    name: files
+    access-key: minioadmin
+    secret-key: minioadmin123
 
 
