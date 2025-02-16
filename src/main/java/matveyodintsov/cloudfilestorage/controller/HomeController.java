@@ -6,7 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class dashboardController {
+public class HomeController {
 
     @GetMapping("/")
     public String dashboard(Model model) {
@@ -14,7 +14,7 @@ public class dashboardController {
         if (login != null) {
             model.addAttribute("user", login);
         }
-        return "dashboard";
+        return "/home/dashboard";
     }
 
 }

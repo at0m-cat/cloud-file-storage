@@ -195,7 +195,7 @@ a:hover {
     margin-bottom: 20px;
 }
 
-.upload-btn {
+.upload-btn, .upload-label {
     padding: 12px 20px;
     background: var(--primary-color);
     color: white;
@@ -206,7 +206,7 @@ a:hover {
     transition: background var(--transition-speed), transform var(--transition-speed);
 }
 
-.upload-btn:hover {
+.upload-btn:hover, .upload-label:hover {
     background: var(--primary-hover);
     transform: scale(1.05);
 }
