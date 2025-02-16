@@ -1,10 +1,9 @@
 package matveyodintsov.cloudfilestorage.controller;
 
 import matveyodintsov.cloudfilestorage.dto.UserRegisterDto;
-import matveyodintsov.cloudfilestorage.models.UserEntity;
-import matveyodintsov.cloudfilestorage.repository.UserRepository;
+import matveyodintsov.cloudfilestorage.security.SecurityUtil;
+import matveyodintsov.cloudfilestorage.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,38 +15,48 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserService<UserRegisterDto> userService;
 
     @Autowired
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    public AuthController(UserService<UserRegisterDto> userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/login")
     public String loginPage() {
-        return "auth/login";
+        if (SecurityUtil.getSessionUser() != null) {
+            return "redirect:/dashboard";
+        } else {
+            return "auth/login";
+        }
     }
 
     @GetMapping("/register")
     public String registerPage(Model model) {
-        model.addAttribute("user", new UserRegisterDto());
-        return "auth/register";
+        if (SecurityUtil.getSessionUser() != null) {
+            return "redirect:/dashboard";
+        } else {
+            model.addAttribute("user", new UserRegisterDto());
+            return "auth/register";
+        }
     }
 
     @PostMapping("/register")
     public String register(@ModelAttribute("user") UserRegisterDto userRegisterDto) {
         String login = userRegisterDto.getLogin();
-        if (userRepository.existsByLogin(login)) {
+        String password = userRegisterDto.getPassword();
+        String repeatPassword = userRegisterDto.getRepeatPassword();
+
+        if (!password.equals(repeatPassword)) {
             return "/auth/register-error";
         }
 
-        UserEntity userEntity = new UserEntity();
-        userEntity.setLogin(userRegisterDto.getLogin());
-        userEntity.setPassword(passwordEncoder.encode(userRegisterDto.getPassword()));
+        if (userService.existsByLogin(login)) {
+            return "/auth/register-error";
+        }
 
-        userRepository.save(userEntity);
+        userService.save(userRegisterDto);
+
         return "/auth/register-successfully";
     }
 

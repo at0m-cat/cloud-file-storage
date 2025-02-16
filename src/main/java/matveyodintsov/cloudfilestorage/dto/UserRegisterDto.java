@@ -14,5 +14,7 @@ public class UserRegisterDto {
     private String login;
     @Valid
     private String password;
+    @Valid
+    private String repeatPassword;
 
 }

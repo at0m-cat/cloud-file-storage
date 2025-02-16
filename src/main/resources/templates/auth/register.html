@@ -13,6 +13,7 @@
             <h2>Создать Atom Cloud ID</h2>
             <input type="text" id="register-username" th:field="*{login}" placeholder="Введите логин" required>
             <input type="password" id="register-password" th:field="*{password}" placeholder="Введите пароль" required>
+            <input type="password" id="register-repeat-password" th:field="*{repeatPassword}" placeholder="Повторите пароль" required>
             <button type="submit">Зарегистрироваться</button>
             <p>Уже есть аккаунт? <a onclick="window.location.href='/auth/login'" id="login-redirect">Войти</a></p>
         </form>
