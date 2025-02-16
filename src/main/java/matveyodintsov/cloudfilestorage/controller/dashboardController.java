@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class dashboardController {
 
-    @GetMapping("/dashboard")
+    @GetMapping("/")
     public String dashboard(Model model) {
         String login = SecurityUtil.getSessionUser();
         if (login != null) {

@@ -26,5 +26,10 @@
     <button class="upload-btn">Загрузить файлы</button>
 </main>
 
+<main th:unless="${user}" class="dashboard-content">
+    <h2>Добро пожаловать, <span>Гость</span>!</h2>
+    <p>Зарегистрируйтесь или войдите для доступа к облачному хранилищу</p>
+</main>
+
 </body>
 </html>

@@ -25,7 +25,7 @@ public class AuthController {
     @GetMapping("/login")
     public String loginPage() {
         if (SecurityUtil.getSessionUser() != null) {
-            return "redirect:/dashboard";
+            return "redirect:/";
         } else {
             return "auth/login";
         }
@@ -34,7 +34,7 @@ public class AuthController {
     @GetMapping("/register")
     public String registerPage(Model model) {
         if (SecurityUtil.getSessionUser() != null) {
-            return "redirect:/dashboard";
+            return "redirect:/";
         } else {
             model.addAttribute("user", new UserRegisterDto());
             return "auth/register";
