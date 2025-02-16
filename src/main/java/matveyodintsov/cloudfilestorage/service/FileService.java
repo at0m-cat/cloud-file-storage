@@ -22,26 +22,18 @@ public class FileService {
     }
 
     public String uploadFile(MultipartFile file) throws Exception {
-        String bucketUserName = getLogin();
-
-        if (bucketUserName == null || bucketUserName.isEmpty()) {
+        if (!isAuthenticated()) {
             throw new IllegalArgumentException("Невозможно определить пользователя!");
         }
+
+        String bucketUserName = getLogin();
 
         String fileName = file.getOriginalFilename();
         if (fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException("Файл должен иметь имя!");
         }
-
         try {
-            boolean bucketExists = minioClient.bucketExists(
-                    BucketExistsArgs.builder().bucket(bucketUserName).build()
-            );
-
-            if (!bucketExists) {
-                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketUserName).build());
-            }
-
+            createBucket(bucketUserName);
             try (InputStream inputStream = file.getInputStream()) {
                 minioClient.putObject(
                         PutObjectArgs.builder()
@@ -52,7 +44,6 @@ public class FileService {
                                 .build()
                 );
             }
-
             return minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)
@@ -61,13 +52,28 @@ public class FileService {
                             .expiry(7, TimeUnit.DAYS)
                             .build()
             );
-
         } catch (MinioException e) {
             throw new RuntimeException("Ошибка при загрузке файла в MinIO: " + e.getMessage(), e);
         }
     }
 
+    private boolean isAuthenticated() {
+        return getLogin() != null;
+    }
+
     private String getLogin(){
         return SecurityUtil.getSessionUser();
     }
+
+    private void createBucket(String bucketName) throws Exception {
+        String bucketUserName = getLogin();
+        boolean bucketExists = minioClient.bucketExists(
+                BucketExistsArgs.builder().bucket(bucketUserName).build()
+        );
+
+        if (!bucketExists) {
+            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketUserName).build());
+        }
+    }
+
 }
