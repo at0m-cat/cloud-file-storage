@@ -3,6 +3,7 @@ package matveyodintsov.cloudfilestorage.service;
 import io.minio.*;
 import io.minio.errors.MinioException;
 import io.minio.http.Method;
+import matveyodintsov.cloudfilestorage.repository.FileRepository;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +16,14 @@ import java.util.concurrent.TimeUnit;
 public class FileService {
 
     private final MinioClient minioClient;
+    private final FileRepository fileRepository;
+
+    //todo: сохранять файл в базу
 
     @Autowired
-    public FileService(MinioClient minioClient) {
+    public FileService(MinioClient minioClient, FileRepository fileRepository) {
         this.minioClient = minioClient;
+        this.fileRepository = fileRepository;
     }
 
     public String uploadFile(MultipartFile file) throws Exception {

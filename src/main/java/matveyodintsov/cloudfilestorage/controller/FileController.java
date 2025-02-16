@@ -1,30 +1,38 @@
 package matveyodintsov.cloudfilestorage.controller;
 
+import matveyodintsov.cloudfilestorage.dto.UserRegisterDto;
+import matveyodintsov.cloudfilestorage.models.UserEntity;
 import matveyodintsov.cloudfilestorage.service.FileService;
+import matveyodintsov.cloudfilestorage.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin(origins = "*")
-@RestController
+@Controller
 @RequestMapping("/files")
 public class FileController {
 
     private final FileService fileService;
+    private final UserService<UserRegisterDto, UserEntity> userService;
+
+    //todo: проверять пользователя, сравнивать с пользователем из сессии
+    // объединить FileController + StorageController ?
 
     @Autowired
-    public FileController(FileService fileService) {
+    public FileController(FileService fileService, UserService<UserRegisterDto, UserEntity> userService) {
         this.fileService = fileService;
+        this.userService = userService;
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public String uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            String response = fileService.uploadFile(file);
-            return ResponseEntity.ok(response);
+            fileService.uploadFile(file);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Ошибка загрузки файла");
+            throw new RuntimeException("File upload failed");
         }
+        return "redirect:/storage";
     }
 }

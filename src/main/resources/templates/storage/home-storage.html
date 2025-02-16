@@ -17,15 +17,22 @@
 </header>
 
 <main class="dashboard-content">
-    <script src="/js/upload.js"></script>
-    <h2>Мои файлы</h2>
+    <h2>Ваши файлы</h2>
 
-    <input type="file" id="fileInput" multiple style="display: none;">
-    <button class="upload-label">Выбрать файлы</button>
-    <button id="uploadButton" disabled>Загрузить</button>
+    <form action="/files/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <button type="submit">Загрузить</button>
+    </form>
 
-    <p id="fileName"></p>
-    <p id="uploadStatus"></p>
+<!--    <ul class="file-list">-->
+<!--        <li th:each="file : ${files}">-->
+<!--            <span th:text="${file.name}">Имя файла</span>-->
+<!--            <form action="/files/delete/{id}" th:method="post">-->
+<!--                <input type="hidden" name="id" th:value="${file.id}">-->
+<!--                <button type="submit" class="delete-btn">Удалить</button>-->
+<!--            </form>-->
+<!--        </li>-->
+<!--    </ul>-->
 
 </main>
 

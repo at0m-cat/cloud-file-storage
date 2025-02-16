@@ -6,7 +6,8 @@ spring:
     name: 'cloud-file-storage'
   liquibase:
     enabled: true
-    change-log: classpath:db/changelog/001-create-users-table.xml
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+
   jpa:
     hibernate:
       ddl-auto: none

@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService<UserRegisterDto> {
+public class UserServiceImpl implements UserService<UserRegisterDto, UserEntity> {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -29,6 +29,11 @@ public class UserServiceImpl implements UserService<UserRegisterDto> {
     @Override
     public boolean existsByLogin(String login) {
         return userRepository.existsByLogin(login);
+    }
+
+    @Override
+    public UserEntity findByLogin(String login) {
+       return findByLogin(login);
     }
 
     private UserEntity mapToEntity(UserRegisterDto userRegisterDto) {
