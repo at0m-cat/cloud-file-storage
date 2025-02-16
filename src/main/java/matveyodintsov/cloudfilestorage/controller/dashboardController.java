@@ -10,7 +10,10 @@ public class dashboardController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        model.addAttribute("user", SecurityUtil.getSessionUser());
+        String login = SecurityUtil.getSessionUser();
+        if (login != null) {
+            model.addAttribute("user", login);
+        }
         return "dashboard";
     }
 

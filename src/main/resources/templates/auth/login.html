@@ -9,10 +9,10 @@
 <body class="body-auth">
 <div class="container">
     <div th:if="${param.error}" class="error-container">
-        <p>Неверный логин или пароль.</p>
+        <p>Неверный логин или пароль</p>
     </div>
     <div th:if="${param.logout}" class="success-container">
-        <p>Вы вышли из системы.</p>
+        <p>Вы вышли из системы</p>
     </div>
     <div class="form-container">
         <form id="loginForm" th:action="@{/auth/login}" method="post">
