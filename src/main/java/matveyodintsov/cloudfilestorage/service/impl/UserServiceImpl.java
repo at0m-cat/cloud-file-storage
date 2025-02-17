@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService<UserRegisterDto, UserEntity>
 
     @Override
     public UserEntity findByLogin(String login) {
-       return findByLogin(login);
+       return userRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     private UserEntity mapToEntity(UserRegisterDto userRegisterDto) {
