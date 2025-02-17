@@ -32,8 +32,8 @@ public class StorageController {
         return "storage/home-storage";
     }
 
-    @GetMapping("/my/{folderName}")
-    public String myStorage(@PathVariable String folderName, Model model) {
+    @GetMapping("/my/{folderName}/")
+    public String crossToFolder(@PathVariable String folderName, Model model) {
         String login = SecurityUtil.getSessionUser();
         model.addAttribute("user", login);
         model.addAttribute("folders", folderService.getFoldersByUsername(login));

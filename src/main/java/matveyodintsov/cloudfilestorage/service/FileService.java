@@ -81,6 +81,7 @@ public class FileService {
         try {
             createBucket(bucketUserName);
             try (InputStream inputStream = file.getInputStream()) {
+
                 minioClient.putObject(
                         PutObjectArgs.builder()
                                 .bucket(bucketUserName)
@@ -90,9 +91,11 @@ public class FileService {
                                 .build()
                 );
             }
-
-//            FileEntity fileEntity = mapToFileEntity(file);
-//            save(fileEntity);
+            FileEntity fileEntity = new FileEntity();
+            fileEntity.setUser(userService.findByLogin(bucketUserName));
+            fileEntity.setName(fileName);
+            fileEntity.setSize(file.getSize());
+            fileRepository.save(fileEntity);
 
         } catch (MinioException e) {
             throw new RuntimeException("Ошибка при загрузке файла в MinIO: " + e.getMessage(), e);
