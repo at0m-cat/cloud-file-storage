@@ -1,0 +1,20 @@
+<main class="file-area" th:fragment="file-area">
+    <div class="file-grid">
+        <div class="file-item" th:each="folder : ${folders}">
+            <input type="checkbox" class="file-checkbox" th:value="${folder.name}">
+            <img th:src="@{/images/folder.png}" height="70">
+            <div class="file-icon"  >
+                <a th:href="@{/storage/my/{folderName}(folderName=${folder.name})}">
+                    <span th:text="${folder.name}">Имя файла</span>
+                </a>
+            </div>
+        </div>
+        <div class="file-item" th:each="file : ${files}">
+            <input type="checkbox" class="file-checkbox" th:value="${file.name}">
+            <img th:src="@{/images/file.png}" height="70">
+            <div class="file-icon"  >
+                <span th:text="${file.name}">Имя файла</span>
+            </div>
+        </div>
+    </div>
+</main>

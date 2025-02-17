@@ -1,0 +1,11 @@
+<header class="dashboard-header" th:fragment="header">
+    <h1 onclick="window.location.href='/'">Atom Cloud</h1>
+    <div class="user-info" th:if="${user}">
+        <span th:text="${user}">Гость</span>
+        <button class="logout-btn" onclick="window.location.href='/auth/logout'">Выйти</button>
+    </div>
+    <div class="user-info" th:unless="${user}">
+        <span>Гость</span>
+        <button class="logout-btn" onclick="window.location.href='/auth/login'">Войти</button>
+    </div>
+</header>

@@ -1,0 +1,32 @@
+<div th:fragment="sidebar">
+    <aside class="sidebar">
+        <div id="uploadForm">
+            <h2>Добавить файл</h2>
+            <form action="/storage/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="file" required>
+                <button type="submit">Загрузить выбранный файл</button>
+            </form>
+            <form action="/storage/new-folder" method="post">
+                <input type="text" name="folder" placeholder="Имя папки" required>
+                <button type="submit">Создать новую папку</button>
+            </form>
+        </div>
+
+        <div id="fileActions" class="hidden">
+            <h2>Выбрано файлов: <span id="selectedCount">0</span></h2>
+            <form action="/storage/download" method="get">
+                <input type="hidden" name="file" id="downloadFileIds">
+                <button type="submit">Скачать</button>
+            </form>
+            <form action="/storage/rename" method="post" id="renameForm">
+                <input type="hidden" name="oldName" id="renameFileId">
+                <input type="text" name="newName" placeholder="Новое имя" required>
+                <button type="submit">Переименовать</button>
+            </form>
+            <form action="/storage/delete" method="post">
+                <input type="hidden" name="id" id="deleteFileIds">
+                <button type="submit">Удалить</button>
+            </form>
+        </div>
+    </aside>
+</div>

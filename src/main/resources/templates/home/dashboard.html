@@ -7,25 +7,12 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-
-<header class="dashboard-header">
-    <h1>Atom Cloud</h1>
-    <div class="user-info" th:if="${user}">
-        <span th:text="${user}">Гость</span>
-        <button class="logout-btn" onclick="window.location.href='/auth/logout'">Выйти</button>
-    </div>
-    <div class="user-info" th:unless="${user}">
-        <span>Гость</span>
-        <button class="logout-btn" onclick="window.location.href='/auth/login'">Войти</button>
-    </div>
-</header>
-
+<header th:replace="fragment/header :: header"></header>
 <main th:if="${user}" class="dashboard-content">
     <h2>Добро пожаловать, <span th:text="${user}">Пользователь</span>!</h2>
     <p>Ваше облачное хранилище готово к работе.</p>
     <button class="upload-btn" onclick="window.location.href='/storage'">Загрузить файлы</button>
 </main>
-
 <main th:unless="${user}" class="dashboard-content">
     <h2>Добро пожаловать, <span>Гость</span>!</h2>
     <p>Зарегистрируйтесь или войдите для доступа к облачному хранилищу</p>

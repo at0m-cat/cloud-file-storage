@@ -9,17 +9,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 @RequestMapping("/storage")
 public class StorageController {
 
     private final FileService fileService;
     private final FolderService folderService;
-    private final List<Long> selectedFiles = new ArrayList<>();
-    private final List<String> selectedFolders = new ArrayList<>();
 
     @Autowired
     public StorageController(FileService fileService, FolderService folderService) {
@@ -33,8 +28,6 @@ public class StorageController {
         model.addAttribute("files", fileService.getFilesByUsername(login));
         model.addAttribute("folders", folderService.getFoldersByUsername(login));
         model.addAttribute("user", login);
-        model.addAttribute("selectedFiles", selectedFiles);
-        model.addAttribute("selectedFolders", selectedFolders);
 
         return "storage/home-storage";
     }
@@ -44,7 +37,7 @@ public class StorageController {
         String login = SecurityUtil.getSessionUser();
         model.addAttribute("user", login);
         model.addAttribute("folders", folderService.getFoldersByUsername(login));
-        return "storage/home-storage";
+        return "storage/folder";
     }
 
     @PostMapping("/new-folder")
