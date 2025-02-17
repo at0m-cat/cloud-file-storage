@@ -27,18 +27,20 @@ public class FolderService {
         this.userService = userService;
     }
 
+    public FolderEntity getFolder(String folderName) {
+        return folderRepository.findByName(folderName);
+    }
+
     public List<FolderEntity> getFoldersByUsername(String username) {
         return folderRepository.findByUserLogin(username);
     }
 
 
-    public void createFolder(String folderName) {
+    public void createFolder(String folderName, String parent) {
         String login = SecurityUtil.getSessionUser();
         UserEntity user = userService.findByLogin(login);
         try {
-            if (!folderName.endsWith("/")) {
-                folderName += "/";
-            }
+
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(login)
@@ -47,9 +49,11 @@ public class FolderService {
                             .build()
             );
 
+
             FolderEntity folderEntity = new FolderEntity();
             folderEntity.setName(folderName);
             folderEntity.setUser(user);
+            folderEntity.setParent(folderRepository.findByName(parent));
 
             folderRepository.save(folderEntity);
         } catch (Exception e) {

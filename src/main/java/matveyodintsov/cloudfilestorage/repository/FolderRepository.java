@@ -13,4 +13,6 @@ public interface FolderRepository extends JpaRepository<FolderEntity, Long> {
 
     List<FolderEntity> findByUserLogin(String login);
 
+    FolderEntity findByName(String folderName);
+
 }
