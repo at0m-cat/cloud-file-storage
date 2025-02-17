@@ -8,7 +8,6 @@ import io.minio.errors.MinioException;
 import matveyodintsov.cloudfilestorage.models.FileEntity;
 import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import matveyodintsov.cloudfilestorage.repository.FileRepository;
-import matveyodintsov.cloudfilestorage.repository.UserRepository;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,48 +22,27 @@ public class FileService {
     private final MinioClient minioClient;
     private final FileRepository fileRepository;
     private final UserService userService;
-    private final UserRepository userRepository;
-    private final FolderService folderService;
 
     //todo: сохранять файл в базу
 
     @Autowired
-    public FileService(MinioClient minioClient, FileRepository fileRepository, UserService userService, UserRepository userRepository, FolderService folderService) {
+    public FileService(MinioClient minioClient, FileRepository fileRepository, UserService userService) {
         this.minioClient = minioClient;
         this.fileRepository = fileRepository;
         this.userService = userService;
-        this.userRepository = userRepository;
-        this.folderService = folderService;
     }
 
-    public List<FileEntity> getFilesByFolder(FolderEntity folder) {
+    public List<FileEntity> findByFolder(FolderEntity folder) {
         return fileRepository.findByFolder(folder);
     }
 
-    public List<FileEntity> getFilesByUsername(String user) {
-        return fileRepository.findByUserLogin(user);
+    public List<FileEntity> findByUserLoginAndFolderEqualsNull(String login) {
+        return fileRepository.findByUserLoginAndFolderEqualsNull(login);
     }
 
-//    public List<FileEntity> getUserFiles(String username) {
-//        return fileRepository.findByUserLogin(username);
-//    }
-
-//    public void createFolder(String folderName) {
-//        try {
-//            if (!folderName.endsWith("/")) {
-//                folderName += "/";
-//            }
-//            minioClient.putObject(
-//                    PutObjectArgs.builder()
-//                            .bucket(getLogin())
-//                            .object(folderName)
-//                            .stream(new ByteArrayInputStream(new byte[0]), 0, -1)
-//                            .build()
-//            );
-//        } catch (Exception e) {
-//            throw new RuntimeException("Ошибка при создании папки: " + e.getMessage(), e);
-//        }
-//    }
+    public List<FileEntity> findByUserLogin(String user) {
+        return fileRepository.findByUserLogin(user);
+    }
 
     public void uploadFile(MultipartFile file) throws Exception {
         if (!isAuthenticated()) {
@@ -124,20 +102,6 @@ public class FileService {
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketUserName).build());
         }
     }
-
-//    private FileEntity mapToFileEntity(MultipartFile file) {
-//        String fileName = file.getOriginalFilename();
-//        String userName = SecurityUtil.getSessionUser();
-//        String filePath = fileName;
-//        Long fileSize = file.getSize();
-//
-//        FileEntity fileEntity = new FileEntity();
-//        fileEntity.setUser(userService.findByLogin(userName));
-//        fileEntity.setName(fileName);
-//        fileEntity.setPath(filePath);
-//        fileEntity.setSize(fileSize);
-//        return fileEntity;
-//    }
 
     private void save(FileEntity fileEntity) throws Exception {
         fileRepository.save(fileEntity);

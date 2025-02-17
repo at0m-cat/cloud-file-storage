@@ -1,9 +1,10 @@
 package matveyodintsov.cloudfilestorage.controller;
 
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
+import matveyodintsov.cloudfilestorage.models.Breadcrumb;
 import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
+import matveyodintsov.cloudfilestorage.service.BreadcrumbService;
 import matveyodintsov.cloudfilestorage.service.FileService;
 import matveyodintsov.cloudfilestorage.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,17 +13,21 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/storage")
 public class StorageController {
 
     private final FileService fileService;
     private final FolderService folderService;
+    private final BreadcrumbService breadcrumbService;
 
     @Autowired
-    public StorageController(FileService fileService, FolderService folderService) {
+    public StorageController(FileService fileService, FolderService folderService, BreadcrumbService breadcrumbService) {
         this.fileService = fileService;
         this.folderService = folderService;
+        this.breadcrumbService = breadcrumbService;
     }
 
 
@@ -37,8 +42,8 @@ public class StorageController {
     @GetMapping()
     public String storage(Model model) {
         String login = SecurityUtil.getSessionUser();
-        model.addAttribute("files", fileService.getFilesByUsername(login));
-        model.addAttribute("folders", folderService.getFoldersByUsername(login));
+        model.addAttribute("files", fileService.findByUserLoginAndFolderEqualsNull(login));
+        model.addAttribute("folders", folderService.findByUserLoginAndParentEqualsNull(login));
         model.addAttribute("user", login);
 
         return "storage/home-storage";
@@ -47,26 +52,28 @@ public class StorageController {
     @GetMapping("/my/{folder}/**")
     public String crossToFolder(@PathVariable String folder, Model model) {
         String folderName = folder;
+        String login = SecurityUtil.getSessionUser();
 
         if (!folderName.endsWith("/")) {
             folderName += "/";
         }
 
-        FolderEntity folderEntity = folderService.getFolder(folderName);
+        //todo: разобраться с breadcrumb -> получать валидные ссылки
 
-        String login = SecurityUtil.getSessionUser();
+        FolderEntity folderEntity = folderService.findByName(folderName);
+        List<Breadcrumb> breadcrumbs = breadcrumbService.generateBreadcrumbs(folder);
+
+        model.addAttribute("breadcrumbs", breadcrumbs);
         model.addAttribute("user", login);
         model.addAttribute("folders", folderEntity.getSubfolders());
+        model.addAttribute("files", fileService.findByFolder(folderEntity));
         return "storage/folder";
     }
 
     @PostMapping("/new-folder")
     public String newFolder(@RequestParam("folder") String folder,
                             HttpServletRequest request, Model model) {
-
-
         String folderName = folder;
-
         if (!folderName.endsWith("/")) {
             folderName += "/";
         }
@@ -74,7 +81,9 @@ public class StorageController {
         System.out.println(request.getRequestURI() + " -> folder path");
         System.out.println(folderName + " -> folder name");
 
-//        folderService.createFolder(folderName, "secret/");
+        //todo: получать имя папки, в которой создается файл !!
+
+//        folderService.createFolder(folderName, "qwerty/");
 
         String login = SecurityUtil.getSessionUser();
         model.addAttribute("user", login);

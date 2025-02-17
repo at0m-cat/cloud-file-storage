@@ -2,7 +2,6 @@ package matveyodintsov.cloudfilestorage.service;
 
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
-import matveyodintsov.cloudfilestorage.models.FileEntity;
 import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import matveyodintsov.cloudfilestorage.models.UserEntity;
 import matveyodintsov.cloudfilestorage.repository.FolderRepository;
@@ -27,12 +26,16 @@ public class FolderService {
         this.userService = userService;
     }
 
-    public FolderEntity getFolder(String folderName) {
+    public FolderEntity findByName(String folderName) {
         return folderRepository.findByName(folderName);
     }
 
-    public List<FolderEntity> getFoldersByUsername(String username) {
+    public List<FolderEntity> findByUserLogin(String username) {
         return folderRepository.findByUserLogin(username);
+    }
+
+    public List<FolderEntity> findByUserLoginAndParentEqualsNull(String username) {
+        return folderRepository.findByUserLoginAndParentEqualsNull(username);
     }
 
 

@@ -1,4 +1,10 @@
 <main class="file-area" th:fragment="file-area">
+    <nav class="breadcrumbs">
+        <span th:each="breadcrumb : ${breadcrumbs}">
+            <span> / </span>
+            <a th:href="@{${breadcrumb.path}}" th:text="${breadcrumb.name}"></a>
+        </span>
+    </nav>
     <div class="file-grid">
         <div class="file-item" th:each="folder : ${folders}">
             <input type="checkbox" class="file-checkbox" th:value="${folder.name}">

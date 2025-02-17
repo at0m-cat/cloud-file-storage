@@ -25,8 +25,8 @@ public class UserEntity {
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<FileEntity> files = new ArrayList<>();
+    private List<FileEntity> files;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<FolderEntity> folders = new ArrayList<>();
+    private List<FolderEntity> folders;
 }
