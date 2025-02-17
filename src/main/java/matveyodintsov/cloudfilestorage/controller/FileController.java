@@ -6,6 +6,7 @@ import matveyodintsov.cloudfilestorage.service.FileService;
 import matveyodintsov.cloudfilestorage.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,12 @@ public class FileController {
         this.fileService = fileService;
         this.userService = userService;
     }
+
+//    @PostMapping("/folder")
+//    public String createFolder(@RequestParam("newFolder") String newFolder) {
+//        fileService.createFolder(newFolder);
+//        return "redirect:/storage";
+//    }
 
     @PostMapping("/upload")
     public String uploadFile(@RequestParam("file") MultipartFile file) {

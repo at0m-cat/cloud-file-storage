@@ -25,6 +25,7 @@
                 <button type="submit">Загрузить выбранный файл</button>
             </form>
             <form action="/files/folder" method="post">
+                <input type="text" name="newFolder" placeholder="Имя папки" required>
                 <button type="submit">Создать новую папку</button>
             </form>
         </div>
@@ -49,10 +50,12 @@
     <main class="file-area">
         <div class="file-grid">
             <div class="file-item" th:each="file : ${files}">
-                <div class="file-icon">
+                <input type="checkbox" class="file-checkbox">
+                <img th:src="@{/images/file.png}" sizes="100px" height="100">
+                <div class="file-icon"  >
                     <span th:text="${file.name}">Имя файла</span>
-                    <input type="checkbox" class="file-checkbox">
                 </div>
+
             </div>
         </div>
 </main>

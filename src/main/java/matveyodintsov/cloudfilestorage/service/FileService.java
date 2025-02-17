@@ -5,7 +5,6 @@ import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.MinioException;
-import lombok.SneakyThrows;
 import matveyodintsov.cloudfilestorage.dto.UserRegisterDto;
 import matveyodintsov.cloudfilestorage.models.FileEntity;
 import matveyodintsov.cloudfilestorage.models.UserEntity;
@@ -34,42 +33,26 @@ public class FileService {
         this.userService = userService;
     }
 
-//    public void uploadFile(MultipartFile file) {
-//        try {
-//            String fileName = file.getOriginalFilename();
-//            InputStream inputStream = file.getInputStream();
-//            String bucketName = getLogin();
-//
-//            createBucket(bucketName);
-//
-//            String objectName = bucketName + "/" + fileName;
-//
-//            minioClient.putObject(
-//                    PutObjectArgs.builder()
-//                            .bucket(bucketName)
-//                            .object(fileName)
-//                            .stream(inputStream, file.getSize(), -1)
-//                            .contentType(file.getContentType())
-//                            .build()
-//            );
-//
-//
-//
-//            FileEntity fileEntity = new FileEntity();
-//            fileEntity.setUser(userService.findByLogin(bucketName));
-//            fileEntity.setName(fileName);
-//            fileEntity.setPath(objectName);
-//            fileEntity.setSize(file.getSize());
-//            fileRepository.save(fileEntity);
-//
-//        } catch (Exception e) {
-//            throw new RuntimeException("Ошибка загрузки файла в MinIO", e);
-//        }
-//    }
-
     public List<FileEntity> getUserFiles(String username) {
         return fileRepository.findByUserLogin(username);
     }
+
+//    public void createFolder(String folderName) {
+//        try {
+//            if (!folderName.endsWith("/")) {
+//                folderName += "/";
+//            }
+//            minioClient.putObject(
+//                    PutObjectArgs.builder()
+//                            .bucket(getLogin())
+//                            .object(folderName)
+//                            .stream(new ByteArrayInputStream(new byte[0]), 0, -1)
+//                            .build()
+//            );
+//        } catch (Exception e) {
+//            throw new RuntimeException("Ошибка при создании папки: " + e.getMessage(), e);
+//        }
+//    }
 
     public void uploadFile(MultipartFile file) throws Exception {
         if (!isAuthenticated()) {
@@ -130,7 +113,7 @@ public class FileService {
     private FileEntity mapToFileEntity(MultipartFile file) {
         String fileName = file.getOriginalFilename();
         String userName = SecurityUtil.getSessionUser();
-        String filePath = userName + "/" + fileName;
+        String filePath = fileName;
         Long fileSize = file.getSize();
 
         FileEntity fileEntity = new FileEntity();
