@@ -3,6 +3,7 @@ package matveyodintsov.cloudfilestorage.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,8 +25,8 @@ public class UserEntity {
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<FileEntity> files;
+    private List<FileEntity> files = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<FolderEntity> folders;
+    private List<FolderEntity> folders = new ArrayList<>();
 }
