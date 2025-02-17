@@ -32,16 +32,16 @@
         <div id="fileActions" class="hidden">
             <h2>Выбрано файлов: <span id="selectedCount">0</span></h2>
             <form action="/storage/download" method="get">
-                <input type="hidden" name="fileIds" id="downloadFileIds">
+                <input type="hidden" name="file" id="downloadFileIds">
                 <button type="submit">Скачать</button>
             </form>
             <form action="/storage/rename" method="post" id="renameForm">
-                <input type="hidden" name="fileId" id="renameFileId">
+                <input type="hidden" name="oldName" id="renameFileId">
                 <input type="text" name="newName" placeholder="Новое имя" required>
                 <button type="submit">Переименовать</button>
             </form>
             <form action="/storage/delete" method="post">
-                <input type="hidden" name="fileIds" id="deleteFileIds">
+                <input type="hidden" name="id" id="deleteFileIds">
                 <button type="submit">Удалить</button>
             </form>
         </div>
@@ -50,7 +50,7 @@
     <main class="file-area">
         <div class="file-grid">
             <div class="file-item" th:each="folder : ${folders}">
-                <input type="checkbox" class="file-checkbox">
+                <input type="checkbox" class="file-checkbox" th:value="${folder.name}">
                 <img th:src="@{/images/folder.png}" height="70">
                 <div class="file-icon"  >
                     <a th:href="@{/storage/my/{folderName}(folderName=${folder.name})}">
@@ -59,7 +59,7 @@
                 </div>
             </div>
             <div class="file-item" th:each="file : ${files}">
-                <input type="checkbox" class="file-checkbox">
+                <input type="checkbox" class="file-checkbox" th:value="${file.name}">
                 <img th:src="@{/images/file.png}" height="70">
                 <div class="file-icon"  >
                     <span th:text="${file.name}">Имя файла</span>
