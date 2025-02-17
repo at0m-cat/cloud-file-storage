@@ -5,6 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.8.xsd">
 
     <include file="/db/changelog/v1/001-create-users-table.xml"/>
-    <include file="/db/changelog/v1/002-create-files-table.xml"/>
+    <include file="/db/changelog/v1/002-create-folders-table.xml"/>
+    <include file="/db/changelog/v1/003-create-files-table.xml"/>
 
 </databaseChangeLog>

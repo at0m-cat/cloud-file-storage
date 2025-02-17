@@ -18,16 +18,17 @@ public class FileEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
-
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "path", nullable = false)
-    private String path;
-
     @Column(name = "size", nullable = false)
-    private long size;
+    private Long size;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "folder_id", nullable = true)
+    private FolderEntity folder;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 }

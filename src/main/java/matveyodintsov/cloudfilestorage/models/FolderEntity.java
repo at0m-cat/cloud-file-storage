@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.util.List;
 
 @Entity
 @Table(name = "folders")
@@ -18,10 +19,17 @@ public class FolderEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @JoinColumn(nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private FileEntity parent;
+    @JoinColumn(name = "parent_folder_id", nullable = true)
+    private FolderEntity parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    private List<FolderEntity> subfolders;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 }

@@ -24,7 +24,7 @@ public class StorageController {
 
         String login = SecurityUtil.getSessionUser();
 
-        model.addAttribute("files", fileService.getUserFiles(login));
+//        model.addAttribute("files", fileService.getUserFiles(login));
         model.addAttribute("user", login);
 
         return "storage/home-storage";

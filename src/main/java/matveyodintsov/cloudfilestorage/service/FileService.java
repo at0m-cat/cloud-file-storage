@@ -33,9 +33,9 @@ public class FileService {
         this.userService = userService;
     }
 
-    public List<FileEntity> getUserFiles(String username) {
-        return fileRepository.findByUserLogin(username);
-    }
+//    public List<FileEntity> getUserFiles(String username) {
+//        return fileRepository.findByUserLogin(username);
+//    }
 
 //    public void createFolder(String folderName) {
 //        try {
@@ -79,8 +79,8 @@ public class FileService {
                 );
             }
 
-            FileEntity fileEntity = mapToFileEntity(file);
-            save(fileEntity);
+//            FileEntity fileEntity = mapToFileEntity(file);
+//            save(fileEntity);
 
         } catch (MinioException e) {
             throw new RuntimeException("Ошибка при загрузке файла в MinIO: " + e.getMessage(), e);
@@ -110,19 +110,19 @@ public class FileService {
         }
     }
 
-    private FileEntity mapToFileEntity(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
-        String userName = SecurityUtil.getSessionUser();
-        String filePath = fileName;
-        Long fileSize = file.getSize();
-
-        FileEntity fileEntity = new FileEntity();
-        fileEntity.setUser(userService.findByLogin(userName));
-        fileEntity.setName(fileName);
-        fileEntity.setPath(filePath);
-        fileEntity.setSize(fileSize);
-        return fileEntity;
-    }
+//    private FileEntity mapToFileEntity(MultipartFile file) {
+//        String fileName = file.getOriginalFilename();
+//        String userName = SecurityUtil.getSessionUser();
+//        String filePath = fileName;
+//        Long fileSize = file.getSize();
+//
+//        FileEntity fileEntity = new FileEntity();
+//        fileEntity.setUser(userService.findByLogin(userName));
+//        fileEntity.setName(fileName);
+//        fileEntity.setPath(filePath);
+//        fileEntity.setSize(fileSize);
+//        return fileEntity;
+//    }
 
     private void save(FileEntity fileEntity) throws Exception {
         fileRepository.save(fileEntity);
