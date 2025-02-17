@@ -24,10 +24,9 @@ public class StorageController {
 
     @GetMapping()
     public String storage(Model model) {
-
         String login = SecurityUtil.getSessionUser();
-
-//        model.addAttribute("files", fileService.getUserFiles(login));
+        model.addAttribute("files", fileService.getFilesByUsername(login));
+        model.addAttribute("folders", folderService.getFoldersByUsername(login));
         model.addAttribute("user", login);
 
         return "storage/home-storage";
@@ -37,7 +36,18 @@ public class StorageController {
     public String myStorage(@PathVariable String folderName, Model model) {
         String login = SecurityUtil.getSessionUser();
         model.addAttribute("user", login);
+        model.addAttribute("folders", folderService.getFoldersByUsername(login));
         return "storage/home-storage";
+    }
+
+    @PostMapping("/new-folder")
+    public String newFolder(@RequestParam("folder") String folder, Model model) {
+
+        folderService.createFolder(folder);
+
+        String login = SecurityUtil.getSessionUser();
+        model.addAttribute("user", login);
+        return "redirect:/storage";
     }
 
     @PostMapping("/upload")

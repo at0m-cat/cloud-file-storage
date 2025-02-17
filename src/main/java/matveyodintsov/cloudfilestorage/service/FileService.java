@@ -5,10 +5,10 @@ import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.MinioException;
-import matveyodintsov.cloudfilestorage.dto.UserRegisterDto;
 import matveyodintsov.cloudfilestorage.models.FileEntity;
-import matveyodintsov.cloudfilestorage.models.UserEntity;
+import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import matveyodintsov.cloudfilestorage.repository.FileRepository;
+import matveyodintsov.cloudfilestorage.repository.UserRepository;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,15 +22,27 @@ public class FileService {
 
     private final MinioClient minioClient;
     private final FileRepository fileRepository;
-    private final UserService<UserRegisterDto, UserEntity> userService;
+    private final UserService userService;
+    private final UserRepository userRepository;
+    private final FolderService folderService;
 
     //todo: сохранять файл в базу
 
     @Autowired
-    public FileService(MinioClient minioClient, FileRepository fileRepository, UserService<UserRegisterDto, UserEntity> userService) {
+    public FileService(MinioClient minioClient, FileRepository fileRepository, UserService userService, UserRepository userRepository, FolderService folderService) {
         this.minioClient = minioClient;
         this.fileRepository = fileRepository;
         this.userService = userService;
+        this.userRepository = userRepository;
+        this.folderService = folderService;
+    }
+
+    public List<FileEntity> getFilesByFolder(FolderEntity folder) {
+        return fileRepository.findByFolder(folder);
+    }
+
+    public List<FileEntity> getFilesByUsername(String user) {
+        return fileRepository.findByUserLogin(user);
     }
 
 //    public List<FileEntity> getUserFiles(String username) {

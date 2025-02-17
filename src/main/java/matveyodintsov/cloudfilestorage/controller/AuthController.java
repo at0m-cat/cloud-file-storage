@@ -1,7 +1,6 @@
 package matveyodintsov.cloudfilestorage.controller;
 
 import matveyodintsov.cloudfilestorage.dto.UserRegisterDto;
-import matveyodintsov.cloudfilestorage.models.UserEntity;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import matveyodintsov.cloudfilestorage.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserService<UserRegisterDto, UserEntity> userService;
+    private final UserService userService;
 
     @Autowired
-    public AuthController(UserService<UserRegisterDto, UserEntity> userService) {
+    public AuthController(UserService userService) {
         this.userService = userService;
     }
 

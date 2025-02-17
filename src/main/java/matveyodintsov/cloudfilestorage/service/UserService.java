@@ -1,11 +1,47 @@
 package matveyodintsov.cloudfilestorage.service;
 
-public interface UserService<T, K> {
+import matveyodintsov.cloudfilestorage.dto.UserRegisterDto;
+import matveyodintsov.cloudfilestorage.models.UserEntity;
+import matveyodintsov.cloudfilestorage.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
-    void save(T user);
+@Service
+public class UserService {
 
-    boolean existsByLogin(String login);
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    K findByLogin(String login);
+    @Autowired
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public void save(UserRegisterDto userRegisterDto) {
+        UserEntity userEntity = mapToEntity(userRegisterDto);
+        userRepository.save(userEntity);
+    }
+
+    public boolean existsByLogin(String login) {
+        return userRepository.existsByLogin(login);
+    }
+
+    public UserEntity findByLogin(String login) {
+        return userRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    private UserEntity mapToEntity(UserRegisterDto userRegisterDto) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLogin(userRegisterDto.getLogin());
+        userEntity.setPassword(encryptPassword(userRegisterDto.getPassword()));
+        return userEntity;
+    }
+
+    private String encryptPassword(String password) {
+        return passwordEncoder.encode(password);
+    }
+
 
 }

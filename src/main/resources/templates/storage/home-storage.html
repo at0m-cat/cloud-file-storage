@@ -49,13 +49,19 @@
 
     <main class="file-area">
         <div class="file-grid">
+            <div class="file-item" th:each="folder : ${folders}">
+                <input type="checkbox" class="file-checkbox">
+                <img th:src="@{/images/folder.png}" sizes="100px" height="100">
+                <div class="file-icon"  >
+                    <span th:text="${folder.name}">Имя файла</span>
+                </div>
+            </div>
             <div class="file-item" th:each="file : ${files}">
                 <input type="checkbox" class="file-checkbox">
                 <img th:src="@{/images/file.png}" sizes="100px" height="100">
                 <div class="file-icon"  >
                     <span th:text="${file.name}">Имя файла</span>
                 </div>
-
             </div>
         </div>
 </main>
