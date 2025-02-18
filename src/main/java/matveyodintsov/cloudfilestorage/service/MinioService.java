@@ -1,9 +1,6 @@
 package matveyodintsov.cloudfilestorage.service;
 
-import io.minio.BucketExistsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +17,20 @@ public class MinioService {
     @Autowired
     public MinioService(MinioClient minioClient) {
         this.minioClient = minioClient;
+    }
+
+    public InputStream downloadFile(String filePath) {
+        try {
+            return minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(SecurityUtil.getSessionUser())
+                            .object(filePath)
+                            .build()
+            );
+
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при скачивании файла: " + e.getMessage(), e);
+        }
     }
 
     public void insertFile(MultipartFile file, String filePath) {
