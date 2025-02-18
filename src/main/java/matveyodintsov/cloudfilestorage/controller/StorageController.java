@@ -71,7 +71,9 @@ public class StorageController {
 
         FolderEntity parentFolder = folderService.findByPathAndUserLogin(decodePath, login);
         folderService.createFolder(folder, parentFolder);
-
+        if (path.isEmpty()) {
+            return "redirect:/storage";
+        }
         return "redirect:/storage/my/" + path.substring(0, path.lastIndexOf("/"));
     }
 
@@ -88,6 +90,10 @@ public class StorageController {
         }
 
         fileService.insertFile(file, path);
+
+        if (path.isEmpty()) {
+            return "redirect:/storage";
+        }
         return "redirect:/storage/my/" + path.substring(0, path.lastIndexOf("/"));
     }
 }

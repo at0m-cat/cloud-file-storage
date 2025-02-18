@@ -26,14 +26,14 @@ public class FolderEntity {
     @Column(name = "path", nullable = false)
     private String path;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "parent_folder_id", nullable = true)
     private FolderEntity parent;
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<FolderEntity> subfolders;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 }
