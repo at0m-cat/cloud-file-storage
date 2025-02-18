@@ -45,24 +45,39 @@ public class StorageController {
         model.addAttribute("files", fileService.findByUserLoginAndFolderEqualsNull(login));
         model.addAttribute("folders", folderService.findByUserLoginAndParentEqualsNull(login));
         model.addAttribute("user", login);
+        model.addAttribute("path", "");
 
         return "storage/home-storage";
     }
 
-    @GetMapping("/my/{folder}/**")
-    public String crossToFolder(@PathVariable String folder, Model model) {
-        String folderName = folder;
+    @GetMapping("/my/**")
+    public String crossToFolder(HttpServletRequest request, Model model) {
+        String fullPath = request.getRequestURI()
+                .replace("/storage/my/", "");
+        String folderName = fullPath
+                .substring(fullPath.lastIndexOf("/") + 1);
         String login = SecurityUtil.getSessionUser();
 
         if (!folderName.endsWith("/")) {
             folderName += "/";
         }
 
+        System.out.println("FOLDER: " + folderName);
+        System.out.println("LOGIN: " + login);
+        System.out.println("FULL PATH: " + fullPath);
+
         //todo: разобраться с breadcrumb -> получать валидные ссылки
 
         FolderEntity folderEntity = folderService.findByName(folderName);
-        List<Breadcrumb> breadcrumbs = breadcrumbService.generateBreadcrumbs(folder);
+        List<Breadcrumb> breadcrumbs = breadcrumbService.generateBreadcrumbs(fullPath);
+        for (Breadcrumb breadcrumb : breadcrumbs) {
+            System.out.println(breadcrumb);
+        }
 
+        String path = breadcrumbs.get(breadcrumbs.size() - 1).getName() + "/";
+
+
+        model.addAttribute("path", path);
         model.addAttribute("breadcrumbs", breadcrumbs);
         model.addAttribute("user", login);
         model.addAttribute("folders", folderEntity.getSubfolders());
