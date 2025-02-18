@@ -6,7 +6,6 @@ import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import matveyodintsov.cloudfilestorage.service.BreadcrumbService;
 import matveyodintsov.cloudfilestorage.service.FileService;
 import matveyodintsov.cloudfilestorage.service.FolderService;
-import org.hibernate.validator.internal.constraintvalidators.hv.URLValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -71,32 +70,28 @@ public class StorageController {
 
         FolderEntity parentFolder = folderService.findByPathAndUserLogin(decodePath, login);
         folderService.createFolder(folder, parentFolder);
-        try {
-            String url = decodePath.substring(0, decodePath.lastIndexOf("/"));
-            String encodeURL = URLEncoder.encode(url, StandardCharsets.UTF_8);
-            return "redirect:/storage/my/" + encodeURL;
-        } catch (Exception ignored) {
-            return "redirect:/storage";
-        }
+
+        return normalizePath(decodePath);
     }
 
     @PostMapping("/upload")
-    public String uploadFile(@RequestParam("file") MultipartFile file,
-                             @RequestParam("path") String path) {
+    public String uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
         String decodePath = URLDecoder.decode(path, StandardCharsets.UTF_8);
         try {
             fileService.uploadFile(file, decodePath);
         } catch (Exception e) {
-            throw new RuntimeException("File upload failed");
+            throw new RuntimeException("File upload failed", e);
         }
-        try {
-            String url = decodePath.substring(0, decodePath.lastIndexOf("/"));
-            String encodeURL = URLEncoder.encode(url, StandardCharsets.UTF_8);
-            return "redirect:/storage/my/" + encodeURL;
-        } catch (Exception ignored) {
-            return "redirect:/storage";
-        }
+        return normalizePath(decodePath);
     }
 
-
+    private String normalizePath(String path) {
+        if (path == null || path.isEmpty() || "/".equals(path)) {
+            return "redirect:/storage";
+        }
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+        return "redirect:/storage/my/" + URLEncoder.encode(path, StandardCharsets.UTF_8);
+    }
 }

@@ -27,7 +27,7 @@
         <addForeignKeyConstraint constraintName="fk_files_folder"
                                  baseTableName="files" baseColumnNames="folder_id"
                                  referencedTableName="folders" referencedColumnNames="id"
-                                 onDelete="SET NULL"/>
+                                 onDelete="CASCADE"/>
 
         <addForeignKeyConstraint constraintName="fk_files_user"
                                  baseTableName="files" baseColumnNames="user_id"
