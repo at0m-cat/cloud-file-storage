@@ -72,7 +72,7 @@ public class StorageController {
         FolderEntity parentFolder = folderService.findByPathAndUserLogin(decodePath, login);
         folderService.createFolder(folder, parentFolder);
 
-        return "redirect:/storage/my/" + path;
+        return "redirect:/storage/my/" + path.substring(0, path.lastIndexOf("/"));
     }
 
     //todo: decode URL
@@ -88,6 +88,6 @@ public class StorageController {
         }
 
         fileService.insertFile(file, path);
-        return "redirect:/storage/my/" + path;
+        return "redirect:/storage/my/" + path.substring(0, path.lastIndexOf("/"));
     }
 }
