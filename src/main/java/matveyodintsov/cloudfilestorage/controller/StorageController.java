@@ -1,7 +1,6 @@
 package matveyodintsov.cloudfilestorage.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import matveyodintsov.cloudfilestorage.models.Breadcrumb;
 import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import matveyodintsov.cloudfilestorage.service.BreadcrumbService;
@@ -13,7 +12,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Controller
 @RequestMapping("/storage")
@@ -30,18 +31,10 @@ public class StorageController {
         this.breadcrumbService = breadcrumbService;
     }
 
-
-    @GetMapping("/test/{test}")
-    public String test(@PathVariable String test, Model model) {
-        String login = SecurityUtil.getSessionUser();
-        model.addAttribute("user", login);
-        System.out.println(test);
-        return "storage/folder";
-    }
-
     @GetMapping()
     public String storage(Model model) {
         String login = SecurityUtil.getSessionUser();
+
         model.addAttribute("files", fileService.findByUserLoginAndFolderEqualsNull(login));
         model.addAttribute("folders", folderService.findByUserLoginAndParentEqualsNull(login));
         model.addAttribute("user", login);
@@ -52,45 +45,33 @@ public class StorageController {
 
     @GetMapping("/my/**")
     public String crossToFolder(HttpServletRequest request, Model model) {
-        String fullPath = request.getRequestURI()
-                .replace("/storage/my/", "");
-
-        String folderName = fullPath
-                .substring(fullPath.lastIndexOf("/") + 1);
+        String fullPath = request.getRequestURI().replace("/storage/my/", "");
         String login = SecurityUtil.getSessionUser();
+        String decodePath = URLDecoder.decode(fullPath, StandardCharsets.UTF_8);
 
-        if (!folderName.endsWith("/")) {
-            folderName += "/";
-        }
+        FolderEntity folderEntity = folderService.findByPathAndUserLogin(decodePath + "/", login);
 
-        FolderEntity folderEntity = folderService.findByName(folderName);
-
-        model.addAttribute("path", fullPath + "/");
-        model.addAttribute("breadcrumbs", breadcrumbService.generateBreadcrumbs(fullPath));
-        model.addAttribute("user", login);
         model.addAttribute("folders", folderEntity.getSubfolders());
         model.addAttribute("files", fileService.findByFolder(folderEntity));
+        model.addAttribute("path", fullPath + "/");
+        model.addAttribute("breadcrumbs", breadcrumbService.generateBreadcrumbs(decodePath));
+        model.addAttribute("user", login);
+
         return "storage/folder";
     }
 
     @PostMapping("/new-folder")
-    public String newFolder(@RequestParam("folder") String folder,
-                            HttpServletRequest request, Model model) {
-        String folderName = folder;
-        if (!folderName.endsWith("/")) {
-            folderName += "/";
-        }
-
-        System.out.println(request.getRequestURI() + " -> folder path");
-        System.out.println(folderName + " -> folder name");
-
-        //todo: получать имя папки, в которой создается файл !!
-
-//        folderService.createFolder(folderName, "qwerty/");
-
+    public String createFolder(@RequestParam("folder") String folder, @RequestParam("path") String path) {
         String login = SecurityUtil.getSessionUser();
-        model.addAttribute("user", login);
-        return "redirect:/storage";
+        String decodePath = URLDecoder.decode(path, StandardCharsets.UTF_8);
+
+        FolderEntity parentFolder = folderService.findByPathAndUserLogin(decodePath, login);
+        folderService.createFolder(folder, parentFolder);
+
+        String url = path.substring(0, decodePath.lastIndexOf("/"));
+        String encodeURL = URLEncoder.encode(url, StandardCharsets.UTF_8);
+
+        return "redirect:/storage/my/" + encodeURL;
     }
 
     @PostMapping("/upload")

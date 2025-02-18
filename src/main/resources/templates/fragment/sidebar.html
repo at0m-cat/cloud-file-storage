@@ -8,6 +8,7 @@
             </form>
             <form action="/storage/new-folder" method="post">
                 <input type="text" name="folder" placeholder="Имя папки" required>
+                <input type="hidden" name="path" th:value="${path}" required>
                 <button type="submit">Создать новую папку</button>
             </form>
         </div>
