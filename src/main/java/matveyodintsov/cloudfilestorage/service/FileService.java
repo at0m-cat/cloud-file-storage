@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service
@@ -46,6 +48,14 @@ public class FileService {
 
     public InputStream download(String filePath) {
         return minioService.downloadFile(filePath);
+    }
+
+    //todo: разобраться с каскадным удалением, сейчас при удалении файла удаляется пользователь
+    public void deleteFile(String path, String filename) {
+        String decodeFilePath = URLDecoder.decode(path + filename, StandardCharsets.UTF_8);
+        minioService.deleteFile(decodeFilePath);
+        FileEntity file = fileRepository.findByNameAndFolderPath(filename, path);
+        fileRepository.delete(file);
     }
 
     public List<FileEntity> findByFolder(FolderEntity folder) {

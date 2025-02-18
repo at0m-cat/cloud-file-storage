@@ -27,7 +27,8 @@
                 <button type="submit">Переименовать</button>
             </form>
             <form action="/storage/delete" method="post">
-                <input type="hidden" name="id" id="deleteFileIds">
+                <input type="hidden" name="file" id="deleteFileIds">
+                <input type="hidden" name="path" th:value="${path}" required>
                 <button type="submit">Удалить</button>
             </form>
         </div>

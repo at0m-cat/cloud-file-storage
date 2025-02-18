@@ -98,4 +98,15 @@ public class StorageController {
         return "redirect:/storage/my/" + path.substring(0, path.lastIndexOf("/"));
     }
 
+    //todo: разобраться с каскадным удалением, разобраться с return (path)
+    @PostMapping("/delete")
+    public String insertFile(@RequestParam("file") String file, @RequestParam("path") String path) {
+        fileService.deleteFile(path, file);
+
+        if (path.isEmpty()) {
+            return "redirect:/storage";
+        }
+        return "redirect:/storage/my/" + path.substring(0, path.lastIndexOf("/"));
+    }
+
 }

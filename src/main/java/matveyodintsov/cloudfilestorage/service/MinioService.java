@@ -66,6 +66,20 @@ public class MinioService {
         }
     }
 
+    public void deleteFile(String filePath) {
+        try {
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(SecurityUtil.getSessionUser())
+                            .object(filePath)
+                            .build()
+            );
+
+        }catch (Exception e) {
+            throw new RuntimeException("Ошибка при удалении файла: " + e.getMessage(), e);
+        }
+    }
+
     private void createBucket() throws Exception {
         String bucketUserName = SecurityUtil.getSessionUser();
         boolean bucketExists = minioClient.bucketExists(
