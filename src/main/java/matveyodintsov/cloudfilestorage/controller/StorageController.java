@@ -6,6 +6,7 @@ import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import matveyodintsov.cloudfilestorage.service.BreadcrumbService;
 import matveyodintsov.cloudfilestorage.service.FileService;
 import matveyodintsov.cloudfilestorage.service.FolderService;
+import org.hibernate.validator.internal.constraintvalidators.hv.URLValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -70,24 +71,31 @@ public class StorageController {
 
         FolderEntity parentFolder = folderService.findByPathAndUserLogin(decodePath, login);
         folderService.createFolder(folder, parentFolder);
-
-        String url = path.substring(0, decodePath.lastIndexOf("/"));
-        String encodeURL = URLEncoder.encode(url, StandardCharsets.UTF_8);
-
-        return "redirect:/storage/my/" + encodeURL;
+        try {
+            String url = decodePath.substring(0, decodePath.lastIndexOf("/"));
+            String encodeURL = URLEncoder.encode(url, StandardCharsets.UTF_8);
+            return "redirect:/storage/my/" + encodeURL;
+        } catch (Exception ignored) {
+            return "redirect:/storage";
+        }
     }
 
     @PostMapping("/upload")
     public String uploadFile(@RequestParam("file") MultipartFile file,
                              @RequestParam("path") String path) {
         String decodePath = URLDecoder.decode(path, StandardCharsets.UTF_8);
-
         try {
             fileService.uploadFile(file, decodePath);
         } catch (Exception e) {
             throw new RuntimeException("File upload failed");
         }
-        return "redirect:/storage";
+        try {
+            String url = decodePath.substring(0, decodePath.lastIndexOf("/"));
+            String encodeURL = URLEncoder.encode(url, StandardCharsets.UTF_8);
+            return "redirect:/storage/my/" + encodeURL;
+        } catch (Exception ignored) {
+            return "redirect:/storage";
+        }
     }
 
 
