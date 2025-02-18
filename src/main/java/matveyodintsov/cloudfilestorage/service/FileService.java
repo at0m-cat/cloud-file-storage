@@ -22,14 +22,14 @@ public class FileService {
     private final MinioClient minioClient;
     private final FileRepository fileRepository;
     private final UserService userService;
-
-    //todo: сохранять файл в базу
+    private final FolderService folderService;
 
     @Autowired
-    public FileService(MinioClient minioClient, FileRepository fileRepository, UserService userService) {
+    public FileService(MinioClient minioClient, FileRepository fileRepository, UserService userService, FolderService folderService) {
         this.minioClient = minioClient;
         this.fileRepository = fileRepository;
         this.userService = userService;
+        this.folderService = folderService;
     }
 
     public List<FileEntity> findByFolder(FolderEntity folder) {
@@ -44,7 +44,7 @@ public class FileService {
         return fileRepository.findByUserLogin(user);
     }
 
-    public void uploadFile(MultipartFile file) throws Exception {
+    public void uploadFile(MultipartFile file, String path) throws Exception {
         if (!isAuthenticated()) {
             throw new IllegalArgumentException("Невозможно определить пользователя!");
         }
@@ -63,15 +63,19 @@ public class FileService {
                 minioClient.putObject(
                         PutObjectArgs.builder()
                                 .bucket(bucketUserName)
-                                .object(fileName)
+                                .object(path + fileName)
                                 .stream(inputStream, file.getSize(), -1)
                                 .contentType(file.getContentType())
                                 .build()
                 );
             }
+
+            FolderEntity folder = folderService.findByPathAndUserLogin(path, bucketUserName);
+
             FileEntity fileEntity = new FileEntity();
             fileEntity.setUser(userService.findByLogin(bucketUserName));
             fileEntity.setName(fileName);
+            fileEntity.setFolder(folder);
             fileEntity.setSize(file.getSize());
             fileRepository.save(fileEntity);
 

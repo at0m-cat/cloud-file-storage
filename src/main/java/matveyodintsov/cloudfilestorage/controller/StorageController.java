@@ -9,7 +9,10 @@ import matveyodintsov.cloudfilestorage.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URLDecoder;
@@ -75,9 +78,12 @@ public class StorageController {
     }
 
     @PostMapping("/upload")
-    public String uploadFile(@RequestParam("file") MultipartFile file) {
+    public String uploadFile(@RequestParam("file") MultipartFile file,
+                             @RequestParam("path") String path) {
+        String decodePath = URLDecoder.decode(path, StandardCharsets.UTF_8);
+
         try {
-            fileService.uploadFile(file);
+            fileService.uploadFile(file, decodePath);
         } catch (Exception e) {
             throw new RuntimeException("File upload failed");
         }
