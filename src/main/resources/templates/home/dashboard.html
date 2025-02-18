@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<header th:replace="fragment/header :: header"></header>
+<header th:replace="~{fragment/header :: header}"></header>
 <main th:if="${user}" class="dashboard-content">
     <h2>Добро пожаловать, <span th:text="${user}">Пользователь</span>!</h2>
     <p>Ваше облачное хранилище готово к работе.</p>
