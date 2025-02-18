@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @Controller
@@ -63,6 +62,8 @@ public class StorageController {
         return "storage/folder";
     }
 
+    //todo: decode URL
+
     @PostMapping("/new-folder")
     public String createFolder(@RequestParam("folder") String folder, @RequestParam("path") String path) {
         String login = SecurityUtil.getSessionUser();
@@ -71,8 +72,10 @@ public class StorageController {
         FolderEntity parentFolder = folderService.findByPathAndUserLogin(decodePath, login);
         folderService.createFolder(folder, parentFolder);
 
-        return normalizePath(decodePath);
+        return "redirect:/storage/my/" + path;
     }
+
+    //todo: decode URL
 
     @PostMapping("/upload")
     public String insertFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
@@ -85,16 +88,6 @@ public class StorageController {
         }
 
         fileService.insertFile(file, path);
-        return normalizePath(decodePath);
-    }
-
-    private String normalizePath(String path) {
-        if (path == null || path.isEmpty() || "/".equals(path)) {
-            return "redirect:/storage";
-        }
-        if (path.endsWith("/")) {
-            path = path.substring(0, path.length() - 1);
-        }
-        return "redirect:/storage/my/" + URLEncoder.encode(path, StandardCharsets.UTF_8);
+        return "redirect:/storage/my/" + path;
     }
 }
