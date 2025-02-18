@@ -23,6 +23,9 @@ public class FolderEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "path", nullable = false)
+    private String path;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_folder_id", nullable = true)
     private FolderEntity parent;

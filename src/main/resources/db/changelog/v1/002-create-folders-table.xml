@@ -13,6 +13,9 @@
             <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="path" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="parent_folder_id" type="BIGINT">
                 <constraints nullable="true"/>
             </column>

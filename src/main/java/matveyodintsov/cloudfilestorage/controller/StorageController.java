@@ -54,6 +54,7 @@ public class StorageController {
     public String crossToFolder(HttpServletRequest request, Model model) {
         String fullPath = request.getRequestURI()
                 .replace("/storage/my/", "");
+
         String folderName = fullPath
                 .substring(fullPath.lastIndexOf("/") + 1);
         String login = SecurityUtil.getSessionUser();
@@ -62,23 +63,10 @@ public class StorageController {
             folderName += "/";
         }
 
-        System.out.println("FOLDER: " + folderName);
-        System.out.println("LOGIN: " + login);
-        System.out.println("FULL PATH: " + fullPath);
-
-        //todo: разобраться с breadcrumb -> получать валидные ссылки
-
         FolderEntity folderEntity = folderService.findByName(folderName);
-        List<Breadcrumb> breadcrumbs = breadcrumbService.generateBreadcrumbs(fullPath);
-        for (Breadcrumb breadcrumb : breadcrumbs) {
-            System.out.println(breadcrumb);
-        }
 
-        String path = breadcrumbs.get(breadcrumbs.size() - 1).getName() + "/";
-
-
-        model.addAttribute("path", path);
-        model.addAttribute("breadcrumbs", breadcrumbs);
+        model.addAttribute("path", fullPath + "/");
+        model.addAttribute("breadcrumbs", breadcrumbService.generateBreadcrumbs(fullPath));
         model.addAttribute("user", login);
         model.addAttribute("folders", folderEntity.getSubfolders());
         model.addAttribute("files", fileService.findByFolder(folderEntity));
