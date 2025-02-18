@@ -4,12 +4,13 @@ import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
-import jakarta.annotation.PostConstruct;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 @Service
 public class MinioService {
@@ -21,13 +22,27 @@ public class MinioService {
         this.minioClient = minioClient;
     }
 
+    public void insertFile(MultipartFile file, String filePath) {
+        try {
+            createBucket();
+            try (InputStream inputStream = file.getInputStream()) {
+                minioClient.putObject(
+                        PutObjectArgs.builder()
+                                .bucket(SecurityUtil.getSessionUser())
+                                .object(filePath)
+                                .stream(inputStream, file.getSize(), -1)
+                                .contentType(file.getContentType())
+                                .build()
+                );
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при добавлении файла: " + e.getMessage(), e);
+        }
+    }
+
     public void createFolder(String folderPath) {
         try {
             createBucket();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        try {
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(SecurityUtil.getSessionUser())
@@ -49,6 +64,4 @@ public class MinioService {
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketUserName).build());
         }
     }
-
-
 }

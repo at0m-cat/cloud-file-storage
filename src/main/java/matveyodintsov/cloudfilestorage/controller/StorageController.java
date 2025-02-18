@@ -75,13 +75,16 @@ public class StorageController {
     }
 
     @PostMapping("/upload")
-    public String uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
+    public String insertFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
         String decodePath = URLDecoder.decode(path, StandardCharsets.UTF_8);
-        try {
-            fileService.uploadFile(file, decodePath);
-        } catch (Exception e) {
-            throw new RuntimeException("File upload failed", e);
+
+        String fileName = file.getOriginalFilename();
+
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("Файл должен содержать имя!");
         }
+
+        fileService.insertFile(file, path);
         return normalizePath(decodePath);
     }
 
