@@ -1,21 +1,21 @@
-package matveyodintsov.cloudfilestorage.service;
+package matveyodintsov.cloudfilestorage.repository;
 
 import io.minio.*;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-@Service
-public class MinioService {
+@Repository
+public class CloudRepository {
 
     private final MinioClient minioClient;
 
     @Autowired
-    public MinioService(MinioClient minioClient) {
+    public CloudRepository (MinioClient minioClient) {
         this.minioClient = minioClient;
     }
 
@@ -89,4 +89,5 @@ public class MinioService {
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketUserName).build());
         }
     }
+
 }

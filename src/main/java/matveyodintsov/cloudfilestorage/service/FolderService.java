@@ -14,17 +14,15 @@ import java.util.List;
 @Service
 public class FolderService {
 
-    private final MinioClient minioClient;
     private final FolderRepository folderRepository;
     private final UserService userService;
-    private final MinioService minioService;
+    private final CloudService cloudService;
 
     @Autowired
-    public FolderService(MinioClient minioClient, FolderRepository folderRepository, UserService userService, MinioService minioService) {
-        this.minioClient = minioClient;
+    public FolderService(FolderRepository folderRepository, UserService userService, CloudService cloudService) {
         this.folderRepository = folderRepository;
         this.userService = userService;
-        this.minioService = minioService;
+        this.cloudService = cloudService;
     }
 
     @Transactional
@@ -34,7 +32,7 @@ public class FolderService {
 
         String folderPath = (parent != null ? parent.getPath() : "") + folderName + "/";
 
-        minioService.createFolder(folderPath);
+        cloudService.createFolder(folderPath);
 
         FolderEntity folderEntity = new FolderEntity();
         folderEntity.setName(folderName);

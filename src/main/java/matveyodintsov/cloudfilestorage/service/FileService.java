@@ -20,14 +20,14 @@ public class FileService {
     private final FileRepository fileRepository;
     private final UserService userService;
     private final FolderService folderService;
-    private final MinioService minioService;
+    private final CloudService cloudService;
 
     @Autowired
-    public FileService(FileRepository fileRepository, UserService userService, FolderService folderService, MinioService minioService) {
+    public FileService(FileRepository fileRepository, UserService userService, FolderService folderService, CloudService cloudService) {
         this.fileRepository = fileRepository;
         this.userService = userService;
         this.folderService = folderService;
-        this.minioService = minioService;
+        this.cloudService = cloudService;
     }
 
     @Transactional
@@ -35,7 +35,7 @@ public class FileService {
         String login = SecurityUtil.getSessionUser();
         String filePath = path + file.getOriginalFilename();
 
-        minioService.insertFile(file, filePath);
+        cloudService.insertFile(file, filePath);
 
         FolderEntity folder = folderService.findByPathAndUserLogin(path, login);
 
@@ -49,13 +49,13 @@ public class FileService {
     }
 
     public InputStream download(String filePath) {
-        return minioService.downloadFile(filePath);
+        return cloudService.downloadFile(filePath);
     }
 
     @Transactional
     public void deleteFile(String path, String filename) {
         String decodeFilePath = URLDecoder.decode(path + filename, StandardCharsets.UTF_8);
-        minioService.deleteFile(decodeFilePath);
+        cloudService.deleteFile(decodeFilePath);
 
         FileEntity file;
         if (path.isEmpty()) {
