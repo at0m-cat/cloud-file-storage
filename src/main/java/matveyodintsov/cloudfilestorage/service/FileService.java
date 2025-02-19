@@ -6,6 +6,7 @@ import matveyodintsov.cloudfilestorage.repository.FileRepository;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
@@ -29,6 +30,7 @@ public class FileService {
         this.minioService = minioService;
     }
 
+    @Transactional
     public void insertFile(MultipartFile file, String path) {
         String login = SecurityUtil.getSessionUser();
         String filePath = path + file.getOriginalFilename();
@@ -50,6 +52,7 @@ public class FileService {
         return minioService.downloadFile(filePath);
     }
 
+    @Transactional
     public void deleteFile(String path, String filename) {
         String decodeFilePath = URLDecoder.decode(path + filename, StandardCharsets.UTF_8);
         minioService.deleteFile(decodeFilePath);

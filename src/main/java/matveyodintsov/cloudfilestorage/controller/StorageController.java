@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/storage")
 public class StorageController {
@@ -83,10 +85,23 @@ public class StorageController {
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
 
+//    @PostMapping("/rename")
+//    public String renameFile(@RequestParam("oldName") String oldName, @RequestParam("newName") String newName, @RequestParam("path") String path) {
+//        String decodedPath = Validator.Url.decode(path);
+//
+//        System.out.println(oldName);
+//        System.out.println(newName);
+//
+//        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
+//    }
+
     @PostMapping("/delete")
-    public String deleteFile(@RequestParam("file") String file, @RequestParam("path") String path) {
+    public String deleteFile(@RequestParam("file") List<String> file, @RequestParam("path") String path) {
         String decodedPath = Validator.Url.decode(path);
-        fileService.deleteFile(decodedPath, file);
+
+        for (String files : file) {
+            fileService.deleteFile(decodedPath, files);
+        }
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }

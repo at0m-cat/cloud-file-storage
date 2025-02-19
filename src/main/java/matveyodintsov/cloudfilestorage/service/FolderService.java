@@ -7,6 +7,7 @@ import matveyodintsov.cloudfilestorage.repository.FolderRepository;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class FolderService {
         this.minioService = minioService;
     }
 
+    @Transactional
     public void createFolder(String folderName, FolderEntity parent) {
         String login = SecurityUtil.getSessionUser();
         UserEntity user = userService.findByLogin(login);
