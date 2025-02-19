@@ -69,23 +69,26 @@ public class CloudRepository {
 
     public void renameFile(String oldPath, String newPath) {
         try {
-            minioClient.copyObject(
-                    CopyObjectArgs.builder()
-                            .bucket(SecurityUtil.getSessionUser())
-                            .object(newPath)
-                            .source(
-                                    CopySource.builder()
-                                            .bucket(SecurityUtil.getSessionUser())
-                                            .object(oldPath)
-                                            .build()
-                            )
-                            .build()
-            );
-
+            copy(oldPath, newPath);
             deleteFile(oldPath);
-
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при переименовании файла: " + e.getMessage(), e);
+        }
+    }
+
+    public void renameFolder(String oldPath, String newPath) {
+        try {
+            createFolder(newPath);
+
+            for (Result<Item> result : listObjects(oldPath)) {
+                String oldObjectPath = result.get().objectName();
+                String newObjectPath = oldObjectPath.replace(oldPath, newPath);
+                copy(oldObjectPath, newObjectPath);
+            }
+            deleteFolder(oldPath);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при переименовании папки: " + e.getMessage(), e);
         }
     }
 
@@ -105,15 +108,8 @@ public class CloudRepository {
 
     public void deleteFolder(String folderPath) {
         try {
-            Iterable<Result<Item>> objects = minioClient.listObjects(
-                    ListObjectsArgs.builder()
-                            .bucket(SecurityUtil.getSessionUser())
-                            .prefix(folderPath)
-                            .recursive(true)
-                            .build()
-            );
 
-            for (Result<Item> result : objects) {
+            for (Result<Item> result : listObjects(folderPath)) {
                 minioClient.removeObject(
                         RemoveObjectArgs.builder()
                                 .bucket(SecurityUtil.getSessionUser())
@@ -142,6 +138,31 @@ public class CloudRepository {
         if (!bucketExists) {
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketUserName).build());
         }
+    }
+
+    private void copy(String oldPath, String newPath) throws Exception {
+        minioClient.copyObject(
+                CopyObjectArgs.builder()
+                        .bucket(SecurityUtil.getSessionUser())
+                        .object(newPath)
+                        .source(
+                                CopySource.builder()
+                                        .bucket(SecurityUtil.getSessionUser())
+                                        .object(oldPath)
+                                        .build()
+                        )
+                        .build()
+        );
+    }
+
+    private Iterable<Result<Item>> listObjects(String path) {
+        return minioClient.listObjects(
+                ListObjectsArgs.builder()
+                        .bucket(SecurityUtil.getSessionUser())
+                        .prefix(path)
+                        .recursive(true)
+                        .build()
+        );
     }
 
 }

@@ -33,6 +33,10 @@ public class CloudService {
         cloudRepository.renameFile(oldPath, newPath);
     }
 
+    public void renameFolder(String folderPath, String newFolderPath) {
+        cloudRepository.renameFolder(folderPath, newFolderPath);
+    }
+
     public void deleteFile(String filePath) {
         cloudRepository.deleteFile(filePath);
     }

@@ -109,6 +109,7 @@ public class StorageController {
         System.out.println("FileName: " + filename);
         System.out.println("DecodedPath: " + decodedPath);
 
+        folderService.renameFolder(oldName, filename, decodedPath);
         // folder service -> rename
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(path);

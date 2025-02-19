@@ -55,6 +55,25 @@ public class FolderService {
         folderRepository.delete(folder);
     }
 
+    public void renameFolder(String oldName, String newName, String path) {
+        FolderEntity folder;
+        String pathFolderOld = path + oldName + "/";
+        String pathFolderNew = path + newName + "/";
+        if (path.isEmpty()) {
+            folder = folderRepository.findByNameAndParentIsNullAndUserLogin(oldName, SecurityUtil.getSessionUser());
+        } else {
+            folder = folderRepository.findByNameAndPathAndUserLogin(oldName, pathFolderOld, SecurityUtil.getSessionUser());
+        }
+        cloudService.renameFolder(pathFolderOld, pathFolderNew);
+        folder.setPath(pathFolderNew);
+        folder.setName(newName);
+
+        for (FolderEntity folderEntity : folder.getSubfolders()) {
+            folderEntity.setPath(folderEntity.getPath().replace(oldName, newName));
+        }
+
+        folderRepository.save(folder);
+    }
 
     public FolderEntity findByPathAndUserLogin(String path, String login) {
         return folderRepository.findByPathAndUserLogin(path, login).orElse(null);
