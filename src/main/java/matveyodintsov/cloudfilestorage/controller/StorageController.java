@@ -1,6 +1,7 @@
 package matveyodintsov.cloudfilestorage.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import matveyodintsov.cloudfilestorage.config.Validator;
 import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import matveyodintsov.cloudfilestorage.service.BreadcrumbService;
@@ -14,9 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 
 @Controller
 @RequestMapping("/storage")
@@ -36,77 +34,57 @@ public class StorageController {
     @GetMapping()
     public String storage(Model model) {
         String login = SecurityUtil.getSessionUser();
-
         model.addAttribute("files", fileService.findByUserLoginAndFolderEqualsNull(login));
         model.addAttribute("folders", folderService.findByUserLoginAndParentEqualsNull(login));
         model.addAttribute("user", login);
         model.addAttribute("path", "");
-
         return "storage/home-storage";
     }
 
     @GetMapping("/my/**")
     public String crossToFolder(HttpServletRequest request, Model model) {
         String fullPath = request.getRequestURI().replace("/storage/my/", "");
+        String decodePath = Validator.Url.decode(fullPath);
         String login = SecurityUtil.getSessionUser();
-        String decodePath = URLDecoder.decode(fullPath, StandardCharsets.UTF_8);
 
         FolderEntity folderEntity = folderService.findByPathAndUserLogin(decodePath + "/", login);
 
         model.addAttribute("folders", folderEntity.getSubfolders());
         model.addAttribute("files", fileService.findByFolder(folderEntity));
-        model.addAttribute("path", fullPath + "/");
+        model.addAttribute("path", decodePath + "/");
         model.addAttribute("breadcrumbs", breadcrumbService.generateBreadcrumbs(decodePath));
         model.addAttribute("user", login);
-
         return "storage/folder";
     }
-
-    //todo: decode URL
 
     @PostMapping("/new-folder")
     public String createFolder(@RequestParam("folder") String folder, @RequestParam("path") String path) {
         String login = SecurityUtil.getSessionUser();
-        String decodePath = URLDecoder.decode(path, StandardCharsets.UTF_8);
+        String decodePath = Validator.Url.decode(path);
 
         FolderEntity parentFolder = folderService.findByPathAndUserLogin(decodePath, login);
         folderService.createFolder(folder, parentFolder);
 
-        if (path.isEmpty()) {
-            return "redirect:/storage";
-        }
-        return "redirect:/storage/my/" + path.substring(0, path.lastIndexOf("/"));
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(path);
     }
 
-    //todo: decode URL
-
-    @PostMapping("/upload")
+    @PostMapping("/uploadFile")
     public String insertFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
-        String decodePath = URLDecoder.decode(path, StandardCharsets.UTF_8);
-
+        String decodePath = Validator.Url.decode(path);
         String fileName = file.getOriginalFilename();
-
         if (fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException("Файл должен содержать имя!");
         }
+        fileService.insertFile(file, decodePath);
 
-        fileService.insertFile(file, path);
-
-        if (path.isEmpty()) {
-            return "redirect:/storage";
-        }
-        return "redirect:/storage/my/" + path.substring(0, path.lastIndexOf("/"));
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(path);
     }
 
-    //todo: разобраться с каскадным удалением, разобраться с return (path)
     @PostMapping("/delete")
-    public String insertFile(@RequestParam("file") String file, @RequestParam("path") String path) {
-        fileService.deleteFile(path, file);
+    public String deleteFile(@RequestParam("file") String file, @RequestParam("path") String path) {
+        String decodePath = Validator.Url.decode(path);
+        fileService.deleteFile(decodePath, file);
 
-        if (path.isEmpty()) {
-            return "redirect:/storage";
-        }
-        return "redirect:/storage/my/" + path.substring(0, path.lastIndexOf("/"));
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(path);
     }
-
 }
