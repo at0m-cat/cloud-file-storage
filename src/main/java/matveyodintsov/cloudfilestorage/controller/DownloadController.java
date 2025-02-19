@@ -1,6 +1,7 @@
 package matveyodintsov.cloudfilestorage.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
+import matveyodintsov.cloudfilestorage.config.Validator;
 import matveyodintsov.cloudfilestorage.service.FileService;
 import matveyodintsov.cloudfilestorage.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/storage/download")
@@ -32,24 +31,22 @@ public class DownloadController {
 
     @GetMapping()
     public void downloadFile(@RequestParam("file") String file, @RequestParam("path") String path, HttpServletResponse response) {
+
+        String decodedPath = Validator.Url.decode(path + file);
+        String encodedFilename = Validator.Url.encode(file);
+
+        InputStream fileStream = fileService.download(decodedPath);
+
+        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename*=UTF-8''" + encodedFilename);
         try {
-            String decodePath = URLDecoder.decode(path + file, StandardCharsets.UTF_8);
-
-            InputStream fileStream = fileService.download(decodePath);
-
-            String encodedFilename = URLEncoder.encode(file, StandardCharsets.UTF_8)
-                    .replace("+", "%20");
-
-            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-            response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-                    "attachment; filename*=UTF-8''" + encodedFilename);
-
             OutputStream out = response.getOutputStream();
             fileStream.transferTo(out);
             out.flush();
-
-        } catch (Exception e) {
-            throw new RuntimeException("Ошибка скачивания файла: " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при скачивании файла: " + e.getMessage());
         }
+
     }
 }
