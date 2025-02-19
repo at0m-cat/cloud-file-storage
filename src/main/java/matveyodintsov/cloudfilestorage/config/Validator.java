@@ -29,18 +29,12 @@ public class Validator {
 
         public static String getValidFilename(String oldName, String newName) {
             String fileExtension = oldName.substring(oldName.lastIndexOf("."));
-            String newFilename = newName.replace(REGEX_VALID_NAME, "");
-            newFilename = newFilename.trim();
-
-            if (!newFilename.matches(REGEX_VALID_NAME)) {
-                throw new RuntimeException("Недопустимое имя файла. " +
-                        "Разрешены только буквы, цифры, пробелы, дефисы и подчеркивания");
-            }
+            String newFilename = getValidFoldername(newName);
 
             return newFilename + fileExtension;
         }
 
-        public static String getValidFoldername(String oldName, String newName) {
+        public static String getValidFoldername(String newName) {
             String newFoldername = newName.replace(REGEX_VALID_NAME, "");
             newFoldername = newFoldername.trim();
 
