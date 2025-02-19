@@ -26,6 +26,8 @@ public class StorageController {
     private final FolderService folderService;
     private final BreadcrumbService breadcrumbService;
 
+    //todo: переименовать папку, скачать папку, скачать несколько файлов
+
     @Autowired
     public StorageController(FileService fileService, FolderService folderService, BreadcrumbService breadcrumbService) {
         this.fileService = fileService;
@@ -95,6 +97,21 @@ public class StorageController {
         fileService.renameFile(oldName, filename, decodedPath);
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
+    }
+
+    @PostMapping("/rename/folder")
+    public String renameFolder(@RequestParam("path") String path,
+                               @RequestParam("oldName") String oldName, @RequestParam("newName") String newName) {
+
+        String decodedPath = Validator.Url.decode(path);
+        String filename = Validator.ContentName.getValidFoldername(newName);
+
+        System.out.println("FileName: " + filename);
+        System.out.println("DecodedPath: " + decodedPath);
+
+        // folder service -> rename
+
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(path);
     }
 
     @PostMapping("/delete/file")
