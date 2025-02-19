@@ -25,4 +25,7 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
 
     FileEntity findByNameAndFolderIsNullAndUserLogin(String filename, String login);
 
+    @Query("SELECT COALESCE(SUM(f.size), 0) FROM FileEntity f WHERE f.user.login = :login")
+    Long getCloudSizeByUserLogin(@Param("login") String login);
+
 }

@@ -11,6 +11,7 @@
 <main th:if="${user}" class="dashboard-content">
     <h2>Добро пожаловать, <span th:text="${user}">Пользователь</span>!</h2>
     <p>Ваше облачное хранилище готово к работе.</p>
+    <p th:if="${cloudSizeByUser}">Занято: <span th:text="${cloudSizeByUser.toString}"></span> MB</p>
     <button class="upload-btn" onclick="window.location.href='/storage'">Загрузить файлы</button>
 </main>
 <main th:unless="${user}" class="dashboard-content">

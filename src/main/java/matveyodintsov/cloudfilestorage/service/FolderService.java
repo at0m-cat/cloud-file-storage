@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 @Service
 public class FolderService {
@@ -68,8 +70,16 @@ public class FolderService {
         folder.setPath(pathFolderNew);
         folder.setName(newName);
 
-        for (FolderEntity folderEntity : folder.getSubfolders()) {
-            folderEntity.setPath(folderEntity.getPath().replace(oldName, newName));
+        Queue<FolderEntity> queue = new LinkedList<>();
+        queue.add(folder);
+
+        while (!queue.isEmpty()) {
+            FolderEntity currentFolder = queue.poll();
+            for (FolderEntity subfolder : currentFolder.getSubfolders()) {
+                String updatedPath = subfolder.getPath().replaceFirst("^" + pathFolderOld, pathFolderNew);
+                subfolder.setPath(updatedPath);
+                queue.add(subfolder);
+            }
         }
 
         folderRepository.save(folder);

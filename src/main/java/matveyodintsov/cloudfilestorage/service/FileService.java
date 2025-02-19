@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -90,6 +92,13 @@ public class FileService {
 
     public List<FileEntity> findByUserLogin(String user) {
         return fileRepository.findByUserLogin(user);
+    }
+
+    public BigDecimal getCloudSizeByUserLogin(String login) {
+        Long bytes =  fileRepository.getCloudSizeByUserLogin(login);
+        BigDecimal bigDecimal = new BigDecimal(bytes);
+        BigDecimal megabyte = bigDecimal.divide(new BigDecimal(1024 * 1024), 2, RoundingMode.HALF_UP);
+        return megabyte;
     }
 
     private void save(FileEntity fileEntity) {
