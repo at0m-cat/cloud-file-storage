@@ -3,6 +3,7 @@ package matveyodintsov.cloudfilestorage.repository;
 import io.minio.*;
 import io.minio.messages.Item;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
+import org.apache.el.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,13 +23,7 @@ public class CloudRepository {
 
     public InputStream downloadFile(String filePath) {
         try {
-            return minioClient.getObject(
-                    GetObjectArgs.builder()
-                            .bucket(SecurityUtil.getSessionUser())
-                            .object(filePath)
-                            .build()
-            );
-
+            return getObject(filePath);
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при скачивании файла: " + e.getMessage(), e);
         }
@@ -94,14 +89,8 @@ public class CloudRepository {
 
     public void deleteFile(String filePath) {
         try {
-            minioClient.removeObject(
-                    RemoveObjectArgs.builder()
-                            .bucket(SecurityUtil.getSessionUser())
-                            .object(filePath)
-                            .build()
-            );
-
-        }catch (Exception e) {
+            delete(filePath);
+        } catch (Exception e) {
             throw new RuntimeException("Ошибка при удалении файла: " + e.getMessage(), e);
         }
     }
@@ -110,20 +99,9 @@ public class CloudRepository {
         try {
 
             for (Result<Item> result : listObjects(folderPath)) {
-                minioClient.removeObject(
-                        RemoveObjectArgs.builder()
-                                .bucket(SecurityUtil.getSessionUser())
-                                .object(result.get().objectName())
-                                .build()
-                );
+               delete(result.get().objectName());
             }
-
-            minioClient.removeObject(
-                    RemoveObjectArgs.builder()
-                            .bucket(SecurityUtil.getSessionUser())
-                            .object(folderPath)
-                            .build()
-            );
+            deleteFile(folderPath);
 
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при удалении папки: " + e.getMessage(), e);
@@ -138,6 +116,15 @@ public class CloudRepository {
         if (!bucketExists) {
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketUserName).build());
         }
+    }
+
+    private InputStream getObject(String filePath) throws Exception {
+        return minioClient.getObject(
+                GetObjectArgs.builder()
+                        .bucket(SecurityUtil.getSessionUser())
+                        .object(filePath)
+                        .build()
+        );
     }
 
     private void copy(String oldPath, String newPath) throws Exception {
@@ -161,6 +148,15 @@ public class CloudRepository {
                         .bucket(SecurityUtil.getSessionUser())
                         .prefix(path)
                         .recursive(true)
+                        .build()
+        );
+    }
+
+    private void delete(String path) throws Exception {
+        minioClient.removeObject(
+                RemoveObjectArgs.builder()
+                        .bucket(SecurityUtil.getSessionUser())
+                        .object(path)
                         .build()
         );
     }
