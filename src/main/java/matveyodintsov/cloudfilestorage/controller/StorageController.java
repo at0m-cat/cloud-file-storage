@@ -51,7 +51,7 @@ public class StorageController {
 
         model.addAttribute("folders", folderEntity.getSubfolders());
         model.addAttribute("files", fileService.findByFolder(folderEntity));
-        model.addAttribute("path", encodedPath + "/");  // Закодированный путь для URL
+        model.addAttribute("path", encodedPath + "/");
         model.addAttribute("breadcrumbs", breadcrumbService.generateBreadcrumbs(fullPath));
         model.addAttribute("user", login);
 

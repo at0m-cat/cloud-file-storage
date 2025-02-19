@@ -305,6 +305,38 @@ a:hover {
     display: none;
 }
 
+.breadcrumbs {
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    padding: 10px 15px;
+}
+
+.breadcrumbs a {
+    text-decoration: none;
+    color: #007bff;
+    transition: color 0.2s ease-in-out;
+}
+
+.breadcrumbs a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.breadcrumbs span {
+    color: #ff0000;
+    font-size: 18px;
+}
+
+.breadcrumbs span:last-child a {
+    color: #333;
+    font-weight: bold;
+    pointer-events: none;
+    text-decoration: none;
+}
+
 @media (max-width: 768px) {
     .sidebar {
         width: 250px;

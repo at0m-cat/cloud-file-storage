@@ -1,5 +1,9 @@
 <main class="file-area" th:fragment="file-area">
     <nav class="breadcrumbs">
+        <span th:unless="${breadcrumbs}">
+        <span> / </span>
+            <a> main </a>
+        </span>
         <span th:each="breadcrumb : ${breadcrumbs}">
             <span> / </span>
             <a th:href="@{${breadcrumb.path}}" th:text="${breadcrumb.name}"></a>
