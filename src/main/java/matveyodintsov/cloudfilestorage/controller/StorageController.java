@@ -97,10 +97,12 @@ public class StorageController {
     }
 
     @PostMapping("/delete/folder")
-    public String deleteFolder(@RequestParam("folder") String folder, @RequestParam("path") String path) {
+    public String deleteFolder(@RequestParam("folder") List<String> folder, @RequestParam("path") String path) {
         String decodedPath = Validator.Url.decode(path);
 
-        // folder service -> delete folder
+        for (String folders : folder) {
+            folderService.deleteFolder(decodedPath, folders);
+        }
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }

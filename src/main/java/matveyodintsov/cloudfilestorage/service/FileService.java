@@ -10,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service
@@ -54,8 +52,7 @@ public class FileService {
 
     @Transactional
     public void deleteFile(String path, String filename) {
-        String decodeFilePath = URLDecoder.decode(path + filename, StandardCharsets.UTF_8);
-        cloudService.deleteFile(decodeFilePath);
+        cloudService.deleteFile(path + filename);
 
         FileEntity file;
         if (path.isEmpty()) {

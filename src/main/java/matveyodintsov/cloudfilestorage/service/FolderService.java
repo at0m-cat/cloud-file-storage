@@ -1,6 +1,6 @@
 package matveyodintsov.cloudfilestorage.service;
 
-import io.minio.MinioClient;
+import matveyodintsov.cloudfilestorage.exception.FolderNotFoundException;
 import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import matveyodintsov.cloudfilestorage.models.UserEntity;
 import matveyodintsov.cloudfilestorage.repository.FolderRepository;
@@ -39,17 +39,25 @@ public class FolderService {
         folderEntity.setUser(user);
         folderEntity.setPath(folderPath);
         folderEntity.setParent(parent);
+
         folderRepository.save(folderEntity);
-        System.out.println("Папка создана: " + folderPath);
+    }
+
+    @Transactional
+    public void deleteFolder(String path, String folderName) {
+        String login = SecurityUtil.getSessionUser();
+        String pathFolder = path + folderName + "/";
+        FolderEntity folder = folderRepository.findByPathAndUserLogin(pathFolder, login)
+                .orElseThrow(() -> new FolderNotFoundException("Папка не найдена"));
+
+        cloudService.deleteFolder(path + folderName);
+
+        folderRepository.delete(folder);
     }
 
 
     public FolderEntity findByPathAndUserLogin(String path, String login) {
         return folderRepository.findByPathAndUserLogin(path, login).orElse(null);
-    }
-
-    public FolderEntity findByName(String folderName) {
-        return folderRepository.findByName(folderName).orElse(null);
     }
 
     public List<FolderEntity> findByUserLogin(String username) {

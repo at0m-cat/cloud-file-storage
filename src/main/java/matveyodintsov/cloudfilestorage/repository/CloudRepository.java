@@ -1,6 +1,7 @@
 package matveyodintsov.cloudfilestorage.repository;
 
 import io.minio.*;
+import io.minio.messages.Item;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -77,6 +78,37 @@ public class CloudRepository {
 
         }catch (Exception e) {
             throw new RuntimeException("Ошибка при удалении файла: " + e.getMessage(), e);
+        }
+    }
+
+    public void deleteFolder(String folderPath) {
+        try {
+            Iterable<Result<Item>> objects = minioClient.listObjects(
+                    ListObjectsArgs.builder()
+                            .bucket(SecurityUtil.getSessionUser())
+                            .prefix(folderPath)
+                            .recursive(true)
+                            .build()
+            );
+
+            for (Result<Item> result : objects) {
+                minioClient.removeObject(
+                        RemoveObjectArgs.builder()
+                                .bucket(SecurityUtil.getSessionUser())
+                                .object(result.get().objectName())
+                                .build()
+                );
+            }
+
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(SecurityUtil.getSessionUser())
+                            .object(folderPath)
+                            .build()
+            );
+
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при удалении папки: " + e.getMessage(), e);
         }
     }
 

@@ -33,4 +33,8 @@ public class CloudService {
         cloudRepository.deleteFile(filePath);
     }
 
+    public void deleteFolder(String folderPath) {
+        cloudRepository.deleteFolder(folderPath);
+    }
+
 }
