@@ -29,6 +29,10 @@ public class CloudService {
         cloudRepository.insertFile(file, filePath);
     }
 
+    public void renameFile(String oldPath, String newPath) {
+        cloudRepository.renameFile(oldPath, newPath);
+    }
+
     public void deleteFile(String filePath) {
         cloudRepository.deleteFile(filePath);
     }

@@ -50,6 +50,22 @@ public class FileService {
         return cloudService.downloadFile(filePath);
     }
 
+    public void renameFile(String oldName, String newName, String path) {
+        FileEntity file;
+        if (path.isEmpty()) {
+            file = fileRepository.findByNameAndFolderIsNullAndUserLogin(oldName, SecurityUtil.getSessionUser());
+        } else {
+            file = fileRepository.findByNameAndFolderPathAndUserLogin(oldName, path, SecurityUtil.getSessionUser());
+        }
+
+        String oldPath = path + oldName;
+        String newPath = path + newName;
+        cloudService.renameFile(oldPath, newPath);
+
+        file.setName(newName);
+        fileRepository.save(file);
+    }
+
     @Transactional
     public void deleteFile(String path, String filename) {
         cloudService.deleteFile(path + filename);

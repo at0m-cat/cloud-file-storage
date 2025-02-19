@@ -85,6 +85,18 @@ public class StorageController {
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
 
+    @PostMapping("/rename/file")
+    public String renameFile(@RequestParam("path") String path,
+                             @RequestParam("oldName") String oldName, @RequestParam("newName") String newName) {
+        String decodedPath = Validator.Url.decode(path);
+
+        System.out.println("OLD NAME " + oldName + " NEW NAME " + newName);
+
+        fileService.renameFile(oldName, newName, decodedPath);
+
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
+    }
+
     @PostMapping("/delete/file")
     public String deleteFile(@RequestParam("file") List<String> file, @RequestParam("path") String path) {
         String decodedPath = Validator.Url.decode(path);

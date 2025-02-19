@@ -67,6 +67,28 @@ public class CloudRepository {
         }
     }
 
+    public void renameFile(String oldPath, String newPath) {
+        try {
+            minioClient.copyObject(
+                    CopyObjectArgs.builder()
+                            .bucket(SecurityUtil.getSessionUser())
+                            .object(newPath)
+                            .source(
+                                    CopySource.builder()
+                                            .bucket(SecurityUtil.getSessionUser())
+                                            .object(oldPath)
+                                            .build()
+                            )
+                            .build()
+            );
+
+            deleteFile(oldPath);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при переименовании файла: " + e.getMessage(), e);
+        }
+    }
+
     public void deleteFile(String filePath) {
         try {
             minioClient.removeObject(
