@@ -21,6 +21,8 @@ public interface FileRepository extends JpaRepository<FileEntity, Long> {
     @Query("SELECT f FROM FileEntity f WHERE f.user.login =:login AND f.folder IS NULL")
     List<FileEntity> findByUserLoginAndFolderEqualsNull(@Param("login") String login);
 
-    FileEntity findByNameAndFolderPath(String filename, String path);
+    FileEntity findByNameAndFolderPathAndUserLogin(String filename, String path, String login);
+
+    FileEntity findByNameAndFolderIsNullAndUserLogin(String filename, String login);
 
 }

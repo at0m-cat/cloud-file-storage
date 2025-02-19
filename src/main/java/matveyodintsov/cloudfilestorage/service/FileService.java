@@ -50,11 +50,17 @@ public class FileService {
         return minioService.downloadFile(filePath);
     }
 
-    //todo: разобраться с каскадным удалением, сейчас при удалении файла удаляется пользователь
     public void deleteFile(String path, String filename) {
         String decodeFilePath = URLDecoder.decode(path + filename, StandardCharsets.UTF_8);
         minioService.deleteFile(decodeFilePath);
-        FileEntity file = fileRepository.findByNameAndFolderPath(filename, path);
+
+        FileEntity file;
+        if (path.isEmpty()) {
+            file = fileRepository.findByNameAndFolderIsNullAndUserLogin(filename, SecurityUtil.getSessionUser());
+        } else {
+            file = fileRepository.findByNameAndFolderPathAndUserLogin(filename, path, SecurityUtil.getSessionUser());
+        }
+
         fileRepository.delete(file);
     }
 
