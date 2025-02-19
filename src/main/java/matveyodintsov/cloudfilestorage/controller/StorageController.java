@@ -43,48 +43,51 @@ public class StorageController {
 
     @GetMapping("/my/**")
     public String crossToFolder(HttpServletRequest request, Model model) {
-        String fullPath = request.getRequestURI().replace("/storage/my/", "");
-        String decodePath = Validator.Url.decode(fullPath);
+        String fullPath = Validator.Url.decode(request.getRequestURI().replace("/storage/my/", ""));
+        String encodedPath = Validator.Url.encode(fullPath);
         String login = SecurityUtil.getSessionUser();
 
-        FolderEntity folderEntity = folderService.findByPathAndUserLogin(decodePath + "/", login);
+        FolderEntity folderEntity = folderService.findByPathAndUserLogin(fullPath + "/", login);
 
         model.addAttribute("folders", folderEntity.getSubfolders());
         model.addAttribute("files", fileService.findByFolder(folderEntity));
-        model.addAttribute("path", decodePath + "/");
-        model.addAttribute("breadcrumbs", breadcrumbService.generateBreadcrumbs(decodePath));
+        model.addAttribute("path", encodedPath + "/");  // Закодированный путь для URL
+        model.addAttribute("breadcrumbs", breadcrumbService.generateBreadcrumbs(fullPath));
         model.addAttribute("user", login);
+
         return "storage/folder";
     }
 
     @PostMapping("/new-folder")
     public String createFolder(@RequestParam("folder") String folder, @RequestParam("path") String path) {
         String login = SecurityUtil.getSessionUser();
-        String decodePath = Validator.Url.decode(path);
+        String decodedPath = Validator.Url.decode(path);
 
-        FolderEntity parentFolder = folderService.findByPathAndUserLogin(decodePath, login);
+        FolderEntity parentFolder = folderService.findByPathAndUserLogin(decodedPath, login);
         folderService.createFolder(folder, parentFolder);
 
-        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(path);
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
 
     @PostMapping("/uploadFile")
     public String insertFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
-        String decodePath = Validator.Url.decode(path);
+        String decodedPath = Validator.Url.decode(path);
         String fileName = file.getOriginalFilename();
+
         if (fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException("Файл должен содержать имя!");
         }
-        fileService.insertFile(file, decodePath);
 
-        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(path);
+        fileService.insertFile(file, decodedPath);
+
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
 
     @PostMapping("/delete")
     public String deleteFile(@RequestParam("file") String file, @RequestParam("path") String path) {
-        String decodePath = Validator.Url.decode(path);
-        fileService.deleteFile(decodePath, file);
+        String decodedPath = Validator.Url.decode(path);
+        fileService.deleteFile(decodedPath, file);
 
-        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(path);
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
 }
