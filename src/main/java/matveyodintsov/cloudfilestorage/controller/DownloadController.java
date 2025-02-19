@@ -29,7 +29,7 @@ public class DownloadController {
         this.fileService = fileService;
     }
 
-    @GetMapping()
+    @GetMapping("/file")
     public void downloadFile(@RequestParam("file") String file, @RequestParam("path") String path, HttpServletResponse response) {
 
         String decodedPath = Validator.Url.decode(path + file);

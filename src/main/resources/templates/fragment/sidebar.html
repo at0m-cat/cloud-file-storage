@@ -3,12 +3,12 @@
 
         <div id="uploadForm">
             <h2>Добавить файл</h2>
-            <form action="/storage/uploadFile" method="post" enctype="multipart/form-data">
+            <form action="/storage/upload/file" method="post" enctype="multipart/form-data">
                 <input type="file" name="file" required>
                 <input type="hidden" name="path" th:value="${path}" required>
                 <button type="submit">Загрузить выбранный файл</button>
             </form>
-            <form action="/storage/new-folder" method="post">
+            <form action="/storage/create/folder" method="post">
                 <input type="text" name="folder" placeholder="Имя папки" required>
                 <input type="hidden" name="path" th:value="${path}" required>
                 <button type="submit">Создать новую папку</button>
@@ -17,18 +17,18 @@
 
         <div id="fileActions" class="hidden">
             <h2>Выбрано файлов: <span id="selectedFileCount">0</span></h2>
-            <form action="/storage/downloadFile" method="get" id="downloadFileForm">
+            <form action="/storage/download/file" method="get" id="downloadFileForm">
                 <input type="hidden" name="file" id="downloadFileIds">
                 <input type="hidden" name="path" th:value="${path}" required>
                 <button type="submit">Скачать</button>
             </form>
-            <form action="/storage/renameFile" method="post" id="renameFileForm">
+            <form action="/storage/rename/file" method="post" id="renameFileForm">
                 <input type="hidden" name="oldName" id="renameFileId">
                 <input type="hidden" name="path" th:value="${path}" required>
                 <input type="text" name="newName" placeholder="Новое имя" required>
                 <button type="submit">Переименовать</button>
             </form>
-            <form action="/storage/deleteFile" method="post" id="deleteFileForm">
+            <form action="/storage/delete/file" method="post" id="deleteFileForm">
                 <input type="hidden" name="file" id="deleteFileIds">
                 <input type="hidden" name="path" th:value="${path}" required>
                 <button type="submit">Удалить</button>
@@ -37,18 +37,18 @@
 
         <div id="folderActions" class="hidden">
             <h2>Выбрано папок: <span id="selectedFolderCount">0</span></h2>
-            <form action="/storage/downloadFolder" method="get" id="downloadFolderForm">
+            <form action="/storage/download/folder" method="get" id="downloadFolderForm">
                 <input type="hidden" name="folder" id="downloadFolderIds">
                 <input type="hidden" name="path" th:value="${path}" required>
                 <button type="submit">Скачать</button>
             </form>
-            <form action="/storage/renameFolder" method="post" id="renameFolderForm">
+            <form action="/storage/rename/folder" method="post" id="renameFolderForm">
                 <input type="hidden" name="oldName" id="renameFolderId">
                 <input type="hidden" name="path" th:value="${path}" required>
                 <input type="text" name="newName" placeholder="Новое имя" required>
                 <button type="submit">Переименовать</button>
             </form>
-            <form action="/storage/deleteFolder" method="post" id="deleteFolderForm">
+            <form action="/storage/delete/folder" method="post" id="deleteFolderForm">
                 <input type="hidden" name="folder" id="deleteFolderIds">
                 <input type="hidden" name="path" th:value="${path}" required>
                 <button type="submit">Удалить</button>

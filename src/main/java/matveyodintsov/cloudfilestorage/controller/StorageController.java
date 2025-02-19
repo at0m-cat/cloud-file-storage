@@ -60,7 +60,7 @@ public class StorageController {
         return "storage/folder";
     }
 
-    @PostMapping("/new-folder")
+    @PostMapping("/create/folder")
     public String createFolder(@RequestParam("folder") String folder, @RequestParam("path") String path) {
         String login = SecurityUtil.getSessionUser();
         String decodedPath = Validator.Url.decode(path);
@@ -71,7 +71,7 @@ public class StorageController {
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
 
-    @PostMapping("/uploadFile")
+    @PostMapping("/upload/file")
     public String insertFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
         String decodedPath = Validator.Url.decode(path);
         String fileName = file.getOriginalFilename();
@@ -85,23 +85,22 @@ public class StorageController {
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
 
-//    @PostMapping("/rename")
-//    public String renameFile(@RequestParam("oldName") String oldName, @RequestParam("newName") String newName, @RequestParam("path") String path) {
-//        String decodedPath = Validator.Url.decode(path);
-//
-//        System.out.println(oldName);
-//        System.out.println(newName);
-//
-//        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
-//    }
-
-    @PostMapping("/delete")
+    @PostMapping("/delete/file")
     public String deleteFile(@RequestParam("file") List<String> file, @RequestParam("path") String path) {
         String decodedPath = Validator.Url.decode(path);
 
         for (String files : file) {
             fileService.deleteFile(decodedPath, files);
         }
+
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
+    }
+
+    @PostMapping("/delete/folder")
+    public String deleteFolder(@RequestParam("folder") String folder, @RequestParam("path") String path) {
+        String decodedPath = Validator.Url.decode(path);
+
+        // folder service -> delete folder
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
