@@ -11,11 +11,11 @@
     </nav>
     <div class="file-grid">
         <div class="file-item" th:each="folder : ${folders}">
-            <input type="checkbox" class="file-checkbox" th:value="${folder.name}">
+            <input type="checkbox" class="folder-checkbox" th:value="${folder.name}">
             <img th:src="@{/images/folder.png}" height="70">
             <div class="file-icon"  >
                 <a th:href="@{'/storage/my/' + ${path} + ${#strings.replace(folder.name, '/', '')}}">
-                    <span th:text="${folder.name}">Имя файла</span>
+                    <span th:text="${folder.name}">Имя папки</span>
                 </a>
             </div>
         </div>
