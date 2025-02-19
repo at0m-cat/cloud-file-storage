@@ -31,7 +31,6 @@ public class DownloadController {
 
     @GetMapping("/file")
     public void downloadFile(@RequestParam("file") String file, @RequestParam("path") String path, HttpServletResponse response) {
-
         String decodedPath = Validator.Url.decode(path + file);
         String encodedFilename = Validator.Url.encode(file);
 
@@ -47,6 +46,7 @@ public class DownloadController {
         } catch (IOException e) {
             throw new RuntimeException("Ошибка при скачивании файла: " + e.getMessage());
         }
-
     }
+
+
 }

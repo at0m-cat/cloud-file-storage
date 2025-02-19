@@ -90,9 +90,9 @@ public class StorageController {
                              @RequestParam("oldName") String oldName, @RequestParam("newName") String newName) {
         String decodedPath = Validator.Url.decode(path);
 
-        System.out.println("OLD NAME " + oldName + " NEW NAME " + newName);
+        String filename = Validator.ContentName.getValidFilename(oldName, newName);
 
-        fileService.renameFile(oldName, newName, decodedPath);
+        fileService.renameFile(oldName, filename, decodedPath);
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
