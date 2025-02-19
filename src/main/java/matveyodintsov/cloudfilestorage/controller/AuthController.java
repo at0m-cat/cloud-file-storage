@@ -47,6 +47,8 @@ public class AuthController {
         String password = userRegisterDto.getPassword();
         String repeatPassword = userRegisterDto.getRepeatPassword();
 
+        //todo: сделать проверку логина, пароля
+
         if (!password.equals(repeatPassword)) {
             return "/auth/register-error";
         }
