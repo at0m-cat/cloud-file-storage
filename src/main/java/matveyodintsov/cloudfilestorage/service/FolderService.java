@@ -1,6 +1,5 @@
 package matveyodintsov.cloudfilestorage.service;
 
-import matveyodintsov.cloudfilestorage.exception.FolderNotFoundException;
 import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import matveyodintsov.cloudfilestorage.models.UserEntity;
 import matveyodintsov.cloudfilestorage.repository.FolderRepository;
@@ -56,7 +55,7 @@ public class FolderService {
         String login = SecurityUtil.getSessionUser();
         String pathFolder = path + folderName + "/";
         FolderEntity folder = folderRepository.findByPathAndUserLogin(pathFolder, login)
-                .orElseThrow(() -> new FolderNotFoundException("Папка не найдена"));
+                .orElseThrow(() -> new RuntimeException("Папка не найдена"));
 
         cloudService.deleteFolder(path + folderName);
 
