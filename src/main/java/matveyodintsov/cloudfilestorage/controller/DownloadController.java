@@ -51,7 +51,7 @@ public class DownloadController {
 
         } else {
 
-            String decodedPath = Validator.Url.decode(path + file);
+            String decodedPath = Validator.Url.decode(path + file.get(0));
             inputStream = fileService.download(decodedPath);
             filename = file.get(0);
 
