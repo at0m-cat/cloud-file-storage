@@ -96,6 +96,10 @@ public class FolderService {
         return folderRepository.findByPathAndUserLogin(path, login).orElse(null);
     }
 
+    public List<FolderEntity> findByNameLikeAndUserLogin(String folderName, String login) {
+        return folderRepository.findByNameLikeAndUserLogin(folderName, login);
+    }
+
     public List<FolderEntity> findByUserLoginAndParentEqualsNull(String username) {
         return folderRepository.findByUserLoginAndParentEqualsNull(username);
     }

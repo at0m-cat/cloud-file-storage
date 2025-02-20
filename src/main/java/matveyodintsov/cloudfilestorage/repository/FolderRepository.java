@@ -1,5 +1,6 @@
 package matveyodintsov.cloudfilestorage.repository;
 
+import matveyodintsov.cloudfilestorage.models.FileEntity;
 import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,5 +23,8 @@ public interface FolderRepository extends JpaRepository<FolderEntity, Long> {
     FolderEntity findByNameAndParentIsNullAndUserLogin(String folderName, String login);
 
     FolderEntity findByNameAndPathAndUserLogin(String folderName, String path, String login);
+
+    @Query("SELECT f FROM FolderEntity f WHERE LOWER(f.name) LIKE LOWER(CONCAT('%', :name, '%')) AND f.user.login = :login")
+    List<FolderEntity> findByNameLikeAndUserLogin(@Param("name") String name, @Param("login") String login);
 
 }

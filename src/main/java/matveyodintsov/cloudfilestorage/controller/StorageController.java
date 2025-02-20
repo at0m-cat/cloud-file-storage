@@ -27,7 +27,8 @@ public class StorageController {
     private final FolderService folderService;
     private final BreadcrumbService breadcrumbService;
 
-    //todo: скачать папку, скачать несколько файлов
+    //todo: те же действия, но с найденными файлами, папками
+    // разделить контроллер? insert, rename, delete, find ?
 
     @Autowired
     public StorageController(FileService fileService, FolderService folderService, BreadcrumbService breadcrumbService) {
@@ -101,13 +102,6 @@ public class StorageController {
             throw new IllegalArgumentException("Файл должен содержать имя!");
         }
 
-//        boolean isUpload = Validator.Upload
-//                .isUpload(fileService.getSizeRepository(SecurityUtil.getSessionUser()), file.getSize());
-//
-//        if (!isUpload) {
-//            throw new RuntimeException("Размер файла превышает допустимый!");
-//        }
-
         checkFileNameOrThrow(decodedPath, fileName);
 
         fileService.insert(file, decodedPath);
@@ -165,6 +159,36 @@ public class StorageController {
         }
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
+    }
+
+    @PostMapping("/find-files")
+    public String findFile(@RequestParam("file") String file, Model model) {
+        List<FileEntity> findFile = fileService.findByNameLikeAndUserLogin(file, SecurityUtil.getSessionUser());
+
+        if (findFile.isEmpty()) {
+            throw new RuntimeException("Файлов с таким именем не найдено");
+        }
+
+        model.addAttribute("files", findFile);
+        model.addAttribute("cloudSizeByUser", fileService.getSizeRepository(SecurityUtil.getSessionUser()));
+        model.addAttribute("user", SecurityUtil.getSessionUser());
+
+        return "storage/find-storage";
+    }
+
+    @PostMapping("/find-folders")
+    public String findFolder(@RequestParam("folder") String folder, Model model) {
+        List<FolderEntity> findFolder = folderService.findByNameLikeAndUserLogin(folder, SecurityUtil.getSessionUser());
+
+        if (findFolder.isEmpty()) {
+            throw new RuntimeException("Папок с таким именем не найдено");
+        }
+
+        model.addAttribute("folders", findFolder);
+        model.addAttribute("cloudSizeByUser", fileService.getSizeRepository(SecurityUtil.getSessionUser()));
+        model.addAttribute("user", SecurityUtil.getSessionUser());
+
+        return "storage/find-storage";
     }
 
     private void checkFileNameOrThrow (String path, String filename) {

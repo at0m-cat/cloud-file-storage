@@ -86,6 +86,10 @@ public class FileService {
         fileRepository.delete(file);
     }
 
+    public List<FileEntity> findByNameLikeAndUserLogin(String filename, String login) {
+        return fileRepository.findByNameLikeAndUserLogin(filename, login);
+    }
+
     public List<FileEntity> findByFolder(FolderEntity folder) {
         return fileRepository.findByFolder(folder);
     }
