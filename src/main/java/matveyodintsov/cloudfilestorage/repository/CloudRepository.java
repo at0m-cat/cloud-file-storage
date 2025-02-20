@@ -6,6 +6,8 @@ import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -27,6 +29,11 @@ public class CloudRepository {
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при скачивании файла: " + e.getMessage(), e);
         }
+    }
+
+    //todo: собрать в архив -> передать в контроллер InputStream
+    public InputStream downloadSelectedFiles(List<String> filePaths) {
+        return null;
     }
 
     public InputStream downloadFolder(String folderPath, String folderName) {
