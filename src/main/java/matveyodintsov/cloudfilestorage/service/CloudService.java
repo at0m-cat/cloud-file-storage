@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.InputStream;
 
 @Service
@@ -19,6 +20,10 @@ public class CloudService {
 
     public InputStream downloadFile(String filePath) {
         return cloudRepository.downloadFile(filePath);
+    }
+
+    public InputStream downloadFolder(String folderPath, String folderName) {
+        return cloudRepository.downloadFolder(folderPath, folderName);
     }
 
     public void createFolder(String folderPath) {

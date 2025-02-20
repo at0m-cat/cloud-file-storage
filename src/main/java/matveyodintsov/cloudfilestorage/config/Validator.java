@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 public class Validator {
 
     private static final String REGEX_VALID_NAME = "^(?!.*\\s{2})[а-яА-Яa-zA-Z0-9_\\-\\s]{1,255}$";
+//    private static final Long FILE_SIZE = 10L;
 
     public static class Url {
         public static String encode(String url) {
@@ -46,4 +47,17 @@ public class Validator {
             return validName;
         }
     }
+//
+//    public static class Upload {
+//        public static boolean isUpload(BigDecimal cloudSize, Long fileSize) {
+//
+//            BigDecimal fileSizeMegabytes = new BigDecimal(fileSize)
+//                    .divide(new BigDecimal(1024 * 1024), 2, RoundingMode.HALF_UP);
+//            BigDecimal result = cloudSize.subtract(fileSizeMegabytes);
+//
+//            return fileSizeMegabytes.compareTo(BigDecimal.valueOf(FILE_SIZE)) > 0 &&
+//                    result.compareTo(BigDecimal.ZERO) > 0;
+//        }
+//  }
+
 }

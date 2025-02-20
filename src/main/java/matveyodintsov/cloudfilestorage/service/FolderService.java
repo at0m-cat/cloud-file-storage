@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,8 +28,8 @@ public class FolderService {
         this.cloudService = cloudService;
     }
 
-    public InputStream download(String folderPath) {
-        return cloudService.downloadFile(folderPath);
+    public InputStream download(String folderPath, String folderName) {
+        return cloudService.downloadFolder(folderPath, folderName);
     }
 
     @Transactional
@@ -36,7 +37,8 @@ public class FolderService {
         String login = SecurityUtil.getSessionUser();
         UserEntity user = userService.findByLogin(login);
 
-        FolderEntity parent = folderRepository.findByPathAndUserLogin(path, SecurityUtil.getSessionUser()).orElse(null);
+        FolderEntity parent = folderRepository.findByPathAndUserLogin(path, SecurityUtil.getSessionUser())
+                .orElse(null);
         String folderPath = (parent != null ? parent.getPath() : "") + folderName + "/";
 
         cloudService.createFolder(folderPath);

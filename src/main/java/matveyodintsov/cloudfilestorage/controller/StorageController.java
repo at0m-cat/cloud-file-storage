@@ -41,6 +41,7 @@ public class StorageController {
         String login = SecurityUtil.getSessionUser();
         model.addAttribute("files", fileService.findByUserLoginAndFolderEqualsNull(login));
         model.addAttribute("folders", folderService.findByUserLoginAndParentEqualsNull(login));
+        model.addAttribute("cloudSizeByUser", fileService.getSizeRepository(login));
         model.addAttribute("user", login);
         model.addAttribute("path", "");
         return "storage/home-storage";
@@ -70,6 +71,7 @@ public class StorageController {
 
         model.addAttribute("folders", folderEntity.getSubfolders());
         model.addAttribute("files", fileService.findByFolder(folderEntity));
+        model.addAttribute("cloudSizeByUser", fileService.getSizeRepository(login));
         model.addAttribute("path", encodedPath + "/");
         model.addAttribute("breadcrumbs", breadcrumbService.generateBreadcrumbs(fullPath));
         model.addAttribute("user", login);
@@ -94,9 +96,17 @@ public class StorageController {
         String decodedPath = Validator.Url.decode(path);
         String fileName = file.getOriginalFilename();
 
+
         if (fileName == null || fileName.isEmpty()) {
             throw new IllegalArgumentException("Файл должен содержать имя!");
         }
+
+//        boolean isUpload = Validator.Upload
+//                .isUpload(fileService.getSizeRepository(SecurityUtil.getSessionUser()), file.getSize());
+//
+//        if (!isUpload) {
+//            throw new RuntimeException("Размер файла превышает допустимый!");
+//        }
 
         checkFileNameOrThrow(decodedPath, fileName);
 

@@ -9,7 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "files")
-@ToString
 public class FileEntity {
 
     @Id

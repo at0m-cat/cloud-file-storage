@@ -6,9 +6,10 @@ import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.*;
 
 @Repository
 public class CloudRepository {
@@ -28,14 +29,34 @@ public class CloudRepository {
         }
     }
 
-    //todo: скачать папку, включая вложенные папки в этой папке
-    public InputStream downloadFolder(String folderPath) {
-        return null;
+    public InputStream downloadFolder(String folderPath, String folderName) {
+        try {
+            File zipFile = File.createTempFile(folderName, ".zip");
+            try (FileOutputStream fos = new FileOutputStream(zipFile);
+                 ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(fos))) {
+                Iterable<Result<Item>> objects = listObjects(folderPath);
+                for (Result<Item> result : objects) {
+                    String objectPath = result.get().objectName();
+                    try (InputStream fileStream = getObject(objectPath)) {
+                        String relativePath = objectPath.substring(folderPath.length());
+                        if (relativePath.isEmpty()) {
+                            continue;
+                        }
+                        zipOut.putNextEntry(new ZipEntry(relativePath));
+                        fileStream.transferTo(zipOut);
+                        zipOut.closeEntry();
+                    }
+                }
+            }
+            return new FileInputStream(zipFile);
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при создании ZIP-файла: " + e.getMessage(), e);
+        }
     }
 
     public void insertFile(MultipartFile file, String filePath) {
         try {
-            createBucket();
+            createBucketOrElseVoid();
             try (InputStream inputStream = file.getInputStream()) {
                 minioClient.putObject(
                         PutObjectArgs.builder()
@@ -53,7 +74,7 @@ public class CloudRepository {
 
     public void createFolder(String folderPath) {
         try {
-            createBucket();
+            createBucketOrElseVoid();
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(SecurityUtil.getSessionUser())
@@ -112,13 +133,13 @@ public class CloudRepository {
         }
     }
 
-    private void createBucket() throws Exception {
-        String bucketUserName = SecurityUtil.getSessionUser();
+    private void createBucketOrElseVoid() throws Exception {
+        String bucketName = SecurityUtil.getSessionUser();
         boolean bucketExists = minioClient.bucketExists(
-                BucketExistsArgs.builder().bucket(bucketUserName).build()
+                BucketExistsArgs.builder().bucket(bucketName).build()
         );
         if (!bucketExists) {
-            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketUserName).build());
+            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
         }
     }
 
