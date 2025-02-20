@@ -28,10 +28,11 @@ public class FolderService {
     }
 
     @Transactional
-    public void createFolder(String folderName, FolderEntity parent) {
+    public void createFolder(String path, String folderName) {
         String login = SecurityUtil.getSessionUser();
         UserEntity user = userService.findByLogin(login);
 
+        FolderEntity parent = findByPathAndUserLogin(path, SecurityUtil.getSessionUser());
         String folderPath = (parent != null ? parent.getPath() : "") + folderName + "/";
 
         cloudService.createFolder(folderPath);

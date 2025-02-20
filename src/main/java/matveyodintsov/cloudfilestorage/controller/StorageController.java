@@ -2,6 +2,7 @@ package matveyodintsov.cloudfilestorage.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import matveyodintsov.cloudfilestorage.config.Validator;
+import matveyodintsov.cloudfilestorage.models.FileEntity;
 import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
 import matveyodintsov.cloudfilestorage.service.BreadcrumbService;
@@ -78,11 +79,12 @@ public class StorageController {
 
     @PostMapping("/create/folder")
     public String createFolder(@RequestParam("folder") String folder, @RequestParam("path") String path) {
-        String login = SecurityUtil.getSessionUser();
         String decodedPath = Validator.Url.decode(path);
+        String filename = Validator.ContentName.getValidFoldername(folder);
 
-        FolderEntity parentFolder = folderService.findByPathAndUserLogin(decodedPath, login);
-        folderService.createFolder(folder, parentFolder);
+        checkFolderNameOrThrow(decodedPath, filename);
+
+        folderService.createFolder(decodedPath, filename);
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
@@ -96,6 +98,8 @@ public class StorageController {
             throw new IllegalArgumentException("Файл должен содержать имя!");
         }
 
+        checkFileNameOrThrow(decodedPath, fileName);
+
         fileService.insertFile(file, decodedPath);
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
@@ -105,8 +109,9 @@ public class StorageController {
     public String renameFile(@RequestParam("path") String path,
                              @RequestParam("oldName") String oldName, @RequestParam("newName") String newName) {
         String decodedPath = Validator.Url.decode(path);
-
         String filename = Validator.ContentName.getValidFilename(oldName, newName);
+
+        checkFileNameOrThrow(decodedPath, filename);
 
         fileService.renameFile(oldName, filename, decodedPath);
 
@@ -118,15 +123,16 @@ public class StorageController {
                                @RequestParam("oldName") String oldName, @RequestParam("newName") String newName) {
 
         String decodedPath = Validator.Url.decode(path);
-        String filename = Validator.ContentName.getValidFoldername(newName);
+        String foldername = Validator.ContentName.getValidFoldername(newName);
 
-        System.out.println("FileName: " + filename);
+        System.out.println("FileName: " + foldername);
         System.out.println("DecodedPath: " + decodedPath);
 
-        folderService.renameFolder(oldName, filename, decodedPath);
-        // folder service -> rename
+        checkFolderNameOrThrow(decodedPath, foldername);
 
-        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(path);
+        folderService.renameFolder(oldName, foldername, decodedPath);
+
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
 
     @PostMapping("/delete/file")
@@ -149,5 +155,43 @@ public class StorageController {
         }
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
+    }
+
+    private void checkFileNameOrThrow (String path, String filename) {
+        FolderEntity folder = folderService.findByPathAndUserLogin(path, SecurityUtil.getSessionUser());
+
+        if (folder == null) {
+            List<FileEntity> filesNoFolder = fileService.findByUserLoginAndFolderEqualsNull(SecurityUtil.getSessionUser());
+            for (FileEntity file : filesNoFolder) {
+                if (filename.equals(file.getName())) {
+                    throw new RuntimeException("Файл с таким именем уже существует!");
+                }
+            }
+        } else {
+            for (FileEntity filesFolder : folder.getFiles()) {
+                if (filename.equals(filesFolder.getName())) {
+                    throw new RuntimeException("Файл с таким именем уже существует!");
+                }
+            }
+        }
+    }
+
+    private void checkFolderNameOrThrow (String path, String foldername) {
+        FolderEntity parentFolder = folderService.findByPathAndUserLogin(path, SecurityUtil.getSessionUser());
+        if (parentFolder == null) {
+            List<FolderEntity> foldersNoParent = folderService.findByUserLoginAndParentEqualsNull(SecurityUtil.getSessionUser());
+            for (FolderEntity folders : foldersNoParent) {
+                if (foldername.equals(folders.getName())) {
+                    throw new RuntimeException("Папка с таким именем уже существует!");
+                }
+            }
+
+        } else {
+            for (FolderEntity subFolders : parentFolder.getSubfolders()) {
+                if (foldername.equals(subFolders.getName())) {
+                    throw new RuntimeException("Папка с таким именем уже существует!");
+                }
+            }
+        }
     }
 }

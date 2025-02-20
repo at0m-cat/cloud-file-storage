@@ -6,12 +6,13 @@ import java.nio.charset.StandardCharsets;
 
 public class Validator {
 
-    private static final String REGEX_VALID_NAME = "^[а-яА-Яa-zA-Z0-9_\\-\\s]+$";
+    private static final String REGEX_VALID_NAME = "^(?!.*\\s{2})[а-яА-Яa-zA-Z0-9_\\-\\s]{1,255}$";
 
     public static class Url {
         public static String encode(String url) {
             return URLEncoder.encode(url, StandardCharsets.UTF_8)
                     .replace("+", "%20")
+                    .replace(" ", "%20")
                     .replace("%2F", "/");
         }
 
@@ -35,15 +36,14 @@ public class Validator {
         }
 
         public static String getValidFoldername(String newName) {
-            String newFoldername = newName.replace(REGEX_VALID_NAME, "");
-            newFoldername = newFoldername.trim();
-
-            if (!newFoldername.matches(REGEX_VALID_NAME)) {
+            String validName = newName.trim();
+            if (!validName.matches(REGEX_VALID_NAME)) {
                 throw new RuntimeException("Недопустимое имя файла. " +
-                        "Разрешены только буквы, цифры, пробелы, дефисы и подчеркивания");
+                        "Разрешены только буквы, цифры, пробелы, дефисы и подчеркивания. " +
+                        "Длина не более 255 символов.");
             }
 
-            return newFoldername;
+            return validName;
         }
     }
 }
