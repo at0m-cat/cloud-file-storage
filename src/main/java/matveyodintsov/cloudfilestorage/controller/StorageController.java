@@ -26,7 +26,7 @@ public class StorageController {
     private final FolderService folderService;
     private final BreadcrumbService breadcrumbService;
 
-    //todo: переименовать папку, скачать папку, скачать несколько файлов
+    //todo: скачать папку, скачать несколько файлов
 
     @Autowired
     public StorageController(FileService fileService, FolderService folderService, BreadcrumbService breadcrumbService) {
@@ -47,11 +47,25 @@ public class StorageController {
 
     @GetMapping("/my/**")
     public String crossToFolder(HttpServletRequest request, Model model) {
-        String fullPath = Validator.Url.decode(request.getRequestURI().replace("/storage/my/", ""));
+        String path = request.getRequestURI();
+
+        if ("/storage/my".equals(path)) {
+            return "redirect:/storage";
+        }
+
+        String fullPath = Validator.Url.decode(path.replace("/storage/my/", ""));
         String encodedPath = Validator.Url.encode(fullPath);
+
+        if (encodedPath.isEmpty()) {
+            return "redirect:/storage";
+        }
+
         String login = SecurityUtil.getSessionUser();
 
         FolderEntity folderEntity = folderService.findByPathAndUserLogin(fullPath + "/", login);
+        if (folderEntity == null) {
+            throw new RuntimeException("Страница не найдена");
+        }
 
         model.addAttribute("folders", folderEntity.getSubfolders());
         model.addAttribute("files", fileService.findByFolder(folderEntity));
