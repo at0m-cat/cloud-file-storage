@@ -14,6 +14,18 @@
             </form>
         </div>
 
+        <div id="findForm">
+            <h2>Поиск файлов и папок</h2>
+            <form action="/storage/find/file" method="post">
+                <input type="text" name="file" placeholder="Имя файла" required>
+                <button type="submit">Найти файл</button>
+            </form>
+            <form action="/storage/find/folder" method="post">
+                <input type="text" name="folder" placeholder="Имя папки" required>
+                <button type="submit">Найти папку</button>
+            </form>
+        </div>
+
         <div id="fileActions" class="hidden">
             <h2>Выбрано файлов: <span id="selectedFileCount">0</span></h2>
             <form action="/storage/download/file" method="get" id="downloadFileForm">

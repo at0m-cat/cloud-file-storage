@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     const uploadForm = document.getElementById("uploadForm");
+    const findForm = document.getElementById("findForm");
     const fileActions = document.getElementById("fileActions");
     const folderActions = document.getElementById("folderActions");
 
@@ -49,6 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
         fileActions.classList.toggle("hidden", selectedFiles.length === 0);
         folderActions.classList.toggle("hidden", selectedFolders.length === 0);
         uploadForm.classList.toggle("hidden", selectedFiles.length > 0 || selectedFolders.length > 0);
+        findForm.classList.toggle("hidden", selectedFiles.length > 0 || selectedFolders.length > 0);
 
         renameFolderForm.style.display = selectedFolders.length === 1 ? "block" : "none";
         deleteFolderForm.style.display = selectedFolders.length > 0 ? "block" : "none";
