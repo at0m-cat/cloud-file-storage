@@ -22,7 +22,7 @@ public class HomeController {
         String login = SecurityUtil.getSessionUser();
         if (login != null) {
             model.addAttribute("user", login);
-            model.addAttribute("cloudSizeByUser", fileService.getCloudSizeByUserLogin(login));
+            model.addAttribute("cloudSizeByUser", fileService.getSizeRepository(login));
         }
         return "/home/dashboard";
     }

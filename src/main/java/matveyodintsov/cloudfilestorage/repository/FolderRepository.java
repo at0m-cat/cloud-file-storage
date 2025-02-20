@@ -14,10 +14,6 @@ import java.util.Optional;
 @Repository
 public interface FolderRepository extends JpaRepository<FolderEntity, Long> {
 
-    List<FolderEntity> findByUserLogin(String login);
-
-    Optional<FolderEntity> findByName(String folderName);
-
     @Query("SELECT f FROM FolderEntity f WHERE f.user.login = :login AND f.parent IS NULL")
     List<FolderEntity> findByUserLoginAndParentEqualsNull(@Param("login") String login);
 

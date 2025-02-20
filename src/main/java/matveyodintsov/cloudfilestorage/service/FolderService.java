@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -27,12 +28,16 @@ public class FolderService {
         this.cloudService = cloudService;
     }
 
+    public InputStream download(String folderPath) {
+        return cloudService.downloadFile(folderPath);
+    }
+
     @Transactional
-    public void createFolder(String path, String folderName) {
+    public void create(String path, String folderName) {
         String login = SecurityUtil.getSessionUser();
         UserEntity user = userService.findByLogin(login);
 
-        FolderEntity parent = findByPathAndUserLogin(path, SecurityUtil.getSessionUser());
+        FolderEntity parent = folderRepository.findByPathAndUserLogin(path, SecurityUtil.getSessionUser()).orElse(null);
         String folderPath = (parent != null ? parent.getPath() : "") + folderName + "/";
 
         cloudService.createFolder(folderPath);
@@ -47,7 +52,7 @@ public class FolderService {
     }
 
     @Transactional
-    public void deleteFolder(String path, String folderName) {
+    public void delete(String path, String folderName) {
         String login = SecurityUtil.getSessionUser();
         String pathFolder = path + folderName + "/";
         FolderEntity folder = folderRepository.findByPathAndUserLogin(pathFolder, login)
@@ -58,7 +63,7 @@ public class FolderService {
         folderRepository.delete(folder);
     }
 
-    public void renameFolder(String oldName, String newName, String path) {
+    public void rename(String oldName, String newName, String path) {
         FolderEntity folder;
         String pathFolderOld = path + oldName + "/";
         String pathFolderNew = path + newName + "/";
@@ -86,12 +91,8 @@ public class FolderService {
         folderRepository.save(folder);
     }
 
-    public FolderEntity findByPathAndUserLogin(String path, String login) {
+    public FolderEntity findByPathAndUserLoginOrElseNull(String path, String login) {
         return folderRepository.findByPathAndUserLogin(path, login).orElse(null);
-    }
-
-    public List<FolderEntity> findByUserLogin(String username) {
-        return folderRepository.findByUserLogin(username);
     }
 
     public List<FolderEntity> findByUserLoginAndParentEqualsNull(String username) {

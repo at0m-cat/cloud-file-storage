@@ -31,13 +31,13 @@ public class FileService {
     }
 
     @Transactional
-    public void insertFile(MultipartFile file, String path) {
+    public void insert(MultipartFile file, String path) {
         String login = SecurityUtil.getSessionUser();
         String filePath = path + file.getOriginalFilename();
 
         cloudService.insertFile(file, filePath);
 
-        FolderEntity folder = folderService.findByPathAndUserLogin(path, login);
+        FolderEntity folder = folderService.findByPathAndUserLoginOrElseNull(path, login);
 
         FileEntity fileEntity = new FileEntity();
         fileEntity.setUser(userService.findByLogin(login));
@@ -52,7 +52,7 @@ public class FileService {
         return cloudService.downloadFile(filePath);
     }
 
-    public void renameFile(String oldName, String newName, String path) {
+    public void rename(String oldName, String newName, String path) {
         FileEntity file;
         if (path.isEmpty()) {
             file = fileRepository.findByNameAndFolderIsNullAndUserLogin(oldName, SecurityUtil.getSessionUser());
@@ -69,7 +69,7 @@ public class FileService {
     }
 
     @Transactional
-    public void deleteFile(String path, String filename) {
+    public void delete(String path, String filename) {
         cloudService.deleteFile(path + filename);
 
         FileEntity file;
@@ -90,19 +90,10 @@ public class FileService {
         return fileRepository.findByUserLoginAndFolderEqualsNull(login);
     }
 
-    public List<FileEntity> findByUserLogin(String user) {
-        return fileRepository.findByUserLogin(user);
-    }
-
-    public BigDecimal getCloudSizeByUserLogin(String login) {
+    public BigDecimal getSizeRepository(String login) {
         Long bytes =  fileRepository.getCloudSizeByUserLogin(login);
         BigDecimal bigDecimal = new BigDecimal(bytes);
-        BigDecimal megabyte = bigDecimal.divide(new BigDecimal(1024 * 1024), 2, RoundingMode.HALF_UP);
-        return megabyte;
-    }
-
-    private void save(FileEntity fileEntity) {
-        fileRepository.save(fileEntity);
+        return bigDecimal.divide(new BigDecimal(1024 * 1024), 2, RoundingMode.HALF_UP);
     }
 
 }

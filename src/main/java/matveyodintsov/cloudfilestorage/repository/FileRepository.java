@@ -14,8 +14,6 @@ import java.util.List;
 @Repository
 public interface FileRepository extends JpaRepository<FileEntity, Long> {
 
-    List<FileEntity> findByUserLogin(String login);
-
     List<FileEntity> findByFolder(FolderEntity folder);
 
     @Query("SELECT f FROM FileEntity f WHERE f.user.login =:login AND f.folder IS NULL")

@@ -48,5 +48,18 @@ public class DownloadController {
         }
     }
 
+//    @GetMapping("/folder")
+//    public void downloadFolder(@RequestParam("folder") String folder, @RequestParam("path") String path, HttpServletResponse response) {
+//        String decodedPath = Validator.Url.decode(path + folder + "/");
+//        String encodedFilename = Validator.Url.encode(folder);
+//
+//        InputStream fileStream = fileService.download(decodedPath);
+//
+//        response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+//        response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+//                "attachment; filename*=UTF-8''" + encodedFilename);
+//
+//    }
+
 
 }

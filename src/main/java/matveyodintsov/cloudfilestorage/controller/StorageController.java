@@ -63,7 +63,7 @@ public class StorageController {
 
         String login = SecurityUtil.getSessionUser();
 
-        FolderEntity folderEntity = folderService.findByPathAndUserLogin(fullPath + "/", login);
+        FolderEntity folderEntity = folderService.findByPathAndUserLoginOrElseNull(fullPath + "/", login);
         if (folderEntity == null) {
             throw new RuntimeException("Страница не найдена");
         }
@@ -84,7 +84,7 @@ public class StorageController {
 
         checkFolderNameOrThrow(decodedPath, filename);
 
-        folderService.createFolder(decodedPath, filename);
+        folderService.create(decodedPath, filename);
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
@@ -100,7 +100,7 @@ public class StorageController {
 
         checkFileNameOrThrow(decodedPath, fileName);
 
-        fileService.insertFile(file, decodedPath);
+        fileService.insert(file, decodedPath);
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
@@ -113,7 +113,7 @@ public class StorageController {
 
         checkFileNameOrThrow(decodedPath, filename);
 
-        fileService.renameFile(oldName, filename, decodedPath);
+        fileService.rename(oldName, filename, decodedPath);
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
@@ -130,7 +130,7 @@ public class StorageController {
 
         checkFolderNameOrThrow(decodedPath, foldername);
 
-        folderService.renameFolder(oldName, foldername, decodedPath);
+        folderService.rename(oldName, foldername, decodedPath);
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
@@ -140,7 +140,7 @@ public class StorageController {
         String decodedPath = Validator.Url.decode(path);
 
         for (String files : file) {
-            fileService.deleteFile(decodedPath, files);
+            fileService.delete(decodedPath, files);
         }
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
@@ -151,14 +151,14 @@ public class StorageController {
         String decodedPath = Validator.Url.decode(path);
 
         for (String folders : folder) {
-            folderService.deleteFolder(decodedPath, folders);
+            folderService.delete(decodedPath, folders);
         }
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
 
     private void checkFileNameOrThrow (String path, String filename) {
-        FolderEntity folder = folderService.findByPathAndUserLogin(path, SecurityUtil.getSessionUser());
+        FolderEntity folder = folderService.findByPathAndUserLoginOrElseNull(path, SecurityUtil.getSessionUser());
 
         if (folder == null) {
             List<FileEntity> filesNoFolder = fileService.findByUserLoginAndFolderEqualsNull(SecurityUtil.getSessionUser());
@@ -177,7 +177,7 @@ public class StorageController {
     }
 
     private void checkFolderNameOrThrow (String path, String foldername) {
-        FolderEntity parentFolder = folderService.findByPathAndUserLogin(path, SecurityUtil.getSessionUser());
+        FolderEntity parentFolder = folderService.findByPathAndUserLoginOrElseNull(path, SecurityUtil.getSessionUser());
         if (parentFolder == null) {
             List<FolderEntity> foldersNoParent = folderService.findByUserLoginAndParentEqualsNull(SecurityUtil.getSessionUser());
             for (FolderEntity folders : foldersNoParent) {

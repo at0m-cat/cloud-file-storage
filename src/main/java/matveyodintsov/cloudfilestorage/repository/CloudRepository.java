@@ -3,12 +3,16 @@ package matveyodintsov.cloudfilestorage.repository;
 import io.minio.*;
 import io.minio.messages.Item;
 import matveyodintsov.cloudfilestorage.security.SecurityUtil;
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Repository
 public class CloudRepository {
@@ -26,6 +30,11 @@ public class CloudRepository {
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при скачивании файла: " + e.getMessage(), e);
         }
+    }
+
+    //todo: скачать папку, включая вложенные папки в этой папке
+    public InputStream downloadFolder(String folderPath) {
+        return null;
     }
 
     public void insertFile(MultipartFile file, String filePath) {
