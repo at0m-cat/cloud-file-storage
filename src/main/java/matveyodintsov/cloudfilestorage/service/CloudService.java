@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 
 @Service
 public class CloudService {
@@ -22,8 +23,12 @@ public class CloudService {
         return cloudRepository.downloadFile(filePath);
     }
 
-    public InputStream downloadFolder(String folderPath, String folderName) {
-        return cloudRepository.downloadFolder(folderPath, folderName);
+    public InputStream downloadSelectedFiles(List<String> filePaths) {
+        return cloudRepository.downloadSelectedFiles(filePaths);
+    }
+
+    public InputStream downloadFolder(String folderPath) {
+        return cloudRepository.downloadFolder(folderPath);
     }
 
     public void createFolder(String folderPath) {

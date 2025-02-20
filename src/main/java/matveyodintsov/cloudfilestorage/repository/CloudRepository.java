@@ -31,24 +31,53 @@ public class CloudRepository {
         }
     }
 
-    //todo: собрать в архив -> передать в контроллер InputStream
     public InputStream downloadSelectedFiles(List<String> filePaths) {
-        return null;
-    }
-
-    public InputStream downloadFolder(String folderPath, String folderName) {
         try {
-            File zipFile = File.createTempFile(folderName, ".zip");
+            File zipFile = File.createTempFile("selected_files", ".zip");
+
             try (FileOutputStream fos = new FileOutputStream(zipFile);
                  ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(fos))) {
+
+                for (String filePath : filePaths) {
+                    try (InputStream fileStream = getObject(filePath)) {
+                        String fileName = new File(filePath).getName();
+
+                        zipOut.putNextEntry(new ZipEntry(fileName));
+                        fileStream.transferTo(zipOut);
+                        zipOut.closeEntry();
+
+                    } catch (Exception e) {
+                        System.err.println("Ошибка при добавлении файла в ZIP архив: " + e.getMessage());
+                    }
+                }
+            }
+            return new FileInputStream(zipFile);
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при создании ZIP-архива: " + e.getMessage(), e);
+        }
+    }
+
+    public InputStream downloadFolder(String folderPath) {
+        try {
+
+            File zipFile = File.createTempFile("folder", ".zip");
+            try (FileOutputStream fos = new FileOutputStream(zipFile);
+                 ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(fos))) {
+
                 Iterable<Result<Item>> objects = listObjects(folderPath);
                 for (Result<Item> result : objects) {
                     String objectPath = result.get().objectName();
+
+                    if (objectPath.equals(folderPath)) {
+                        continue;
+                    }
+
                     try (InputStream fileStream = getObject(objectPath)) {
                         String relativePath = objectPath.substring(folderPath.length());
                         if (relativePath.isEmpty()) {
                             continue;
                         }
+
                         zipOut.putNextEntry(new ZipEntry(relativePath));
                         fileStream.transferTo(zipOut);
                         zipOut.closeEntry();

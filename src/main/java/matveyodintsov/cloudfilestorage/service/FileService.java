@@ -52,6 +52,10 @@ public class FileService {
         return cloudService.downloadFile(filePath);
     }
 
+    public InputStream downloadSelected(List<String> filePaths) {
+        return cloudService.downloadSelectedFiles(filePaths);
+    }
+
     public void rename(String oldName, String newName, String path) {
         FileEntity file;
         if (path.isEmpty()) {

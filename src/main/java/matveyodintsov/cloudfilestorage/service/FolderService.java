@@ -28,8 +28,8 @@ public class FolderService {
         this.cloudService = cloudService;
     }
 
-    public InputStream download(String folderPath, String folderName) {
-        return cloudService.downloadFolder(folderPath, folderName);
+    public InputStream download(String folderPath) {
+        return cloudService.downloadFolder(folderPath);
     }
 
     @Transactional
