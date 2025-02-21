@@ -1,26 +1,23 @@
 package matveyodintsov.cloudfilestorage.repository;
 
-import io.minio.*;
+import io.minio.MinioClient;
+import io.minio.Result;
 import io.minio.messages.Item;
-import matveyodintsov.cloudfilestorage.security.SecurityUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import matveyodintsov.cloudfilestorage.api.MinioApi;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.*;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import java.io.*;
-
 @Repository
-public class CloudRepository {
+public class CloudRepository extends MinioApi {
 
-    private final MinioClient minioClient;
 
-    @Autowired
-    public CloudRepository (MinioClient minioClient) {
-        this.minioClient = minioClient;
+    public CloudRepository(MinioClient minioClient) {
+        super(minioClient);
     }
 
     public InputStream downloadFile(String filePath) {
@@ -93,16 +90,7 @@ public class CloudRepository {
     public void insertFile(MultipartFile file, String filePath) {
         try {
             createBucketOrElseVoid();
-            try (InputStream inputStream = file.getInputStream()) {
-                minioClient.putObject(
-                        PutObjectArgs.builder()
-                                .bucket(SecurityUtil.getSessionUser())
-                                .object(filePath)
-                                .stream(inputStream, file.getSize(), -1)
-                                .contentType(file.getContentType())
-                                .build()
-                );
-            }
+            putObject(file, filePath);
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при добавлении файла: " + e.getMessage(), e);
         }
@@ -111,13 +99,7 @@ public class CloudRepository {
     public void createFolder(String folderPath) {
         try {
             createBucketOrElseVoid();
-            minioClient.putObject(
-                    PutObjectArgs.builder()
-                            .bucket(SecurityUtil.getSessionUser())
-                            .object(folderPath)
-                            .stream(new ByteArrayInputStream(new byte[0]), 0, -1)
-                            .build()
-            );
+            putObject(folderPath);
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при создании папки: " + e.getMessage(), e);
         }
@@ -167,59 +149,6 @@ public class CloudRepository {
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при удалении папки: " + e.getMessage(), e);
         }
-    }
-
-    private void createBucketOrElseVoid() throws Exception {
-        String bucketName = SecurityUtil.getSessionUser();
-        boolean bucketExists = minioClient.bucketExists(
-                BucketExistsArgs.builder().bucket(bucketName).build()
-        );
-        if (!bucketExists) {
-            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
-        }
-    }
-
-    private InputStream getObject(String filePath) throws Exception {
-        return minioClient.getObject(
-                GetObjectArgs.builder()
-                        .bucket(SecurityUtil.getSessionUser())
-                        .object(filePath)
-                        .build()
-        );
-    }
-
-    private void copy(String oldPath, String newPath) throws Exception {
-        minioClient.copyObject(
-                CopyObjectArgs.builder()
-                        .bucket(SecurityUtil.getSessionUser())
-                        .object(newPath)
-                        .source(
-                                CopySource.builder()
-                                        .bucket(SecurityUtil.getSessionUser())
-                                        .object(oldPath)
-                                        .build()
-                        )
-                        .build()
-        );
-    }
-
-    private Iterable<Result<Item>> listObjects(String path) {
-        return minioClient.listObjects(
-                ListObjectsArgs.builder()
-                        .bucket(SecurityUtil.getSessionUser())
-                        .prefix(path)
-                        .recursive(true)
-                        .build()
-        );
-    }
-
-    private void delete(String path) throws Exception {
-        minioClient.removeObject(
-                RemoveObjectArgs.builder()
-                        .bucket(SecurityUtil.getSessionUser())
-                        .object(path)
-                        .build()
-        );
     }
 
 }

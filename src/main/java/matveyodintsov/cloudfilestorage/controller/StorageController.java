@@ -77,7 +77,7 @@ public class StorageController {
         model.addAttribute("breadcrumbs", breadcrumbService.generateBreadcrumbs(fullPath));
         model.addAttribute("user", login);
 
-        return "storage/folder";
+        return "storage/folder-storage";
     }
 
     @PostMapping("/create/folder")
@@ -125,16 +125,12 @@ public class StorageController {
     @PostMapping("/rename/folder")
     public String renameFolder(@RequestParam("path") String path,
                                @RequestParam("oldName") String oldName, @RequestParam("newName") String newName) {
-
         String decodedPath = Validator.Url.decode(path);
-        String foldername = Validator.ContentName.getValidFoldername(newName);
+        String folderName = Validator.ContentName.getValidFoldername(newName);
 
-        System.out.println("FileName: " + foldername);
-        System.out.println("DecodedPath: " + decodedPath);
+        checkFolderNameOrThrow(decodedPath, folderName);
 
-        checkFolderNameOrThrow(decodedPath, foldername);
-
-        folderService.rename(oldName, foldername, decodedPath);
+        folderService.rename(oldName, folderName, decodedPath);
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
