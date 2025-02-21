@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -33,18 +34,20 @@ public class UploadController {
 
 
     @PostMapping("/file")
-    public String insertFile(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
+    public String insertFile(@RequestParam("file") List<MultipartFile> file, @RequestParam("path") String path) {
         String decodedPath = Validator.Url.decode(path);
-        String fileName = file.getOriginalFilename();
 
+        for (MultipartFile fileEntity : file) {
 
-        if (fileName == null || fileName.isEmpty()) {
-            throw new IllegalArgumentException("Файл должен содержать имя!");
+            String fileName = fileEntity.getOriginalFilename();
+            if (fileName == null || fileName.isEmpty()) {
+                throw new RuntimeException("Файл должен содержать имя!");
+            }
+
+            filesAndFoldersChecker.checkFileNameOrThrow(decodedPath, fileName);
+
+            fileService.insert(fileEntity, decodedPath);
         }
-
-        filesAndFoldersChecker.checkFileNameOrThrow(decodedPath, fileName);
-
-        fileService.insert(file, decodedPath);
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }

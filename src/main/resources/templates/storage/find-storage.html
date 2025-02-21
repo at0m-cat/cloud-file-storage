@@ -78,7 +78,7 @@
                 <img th:src="@{/images/folder.png}" height="70">
                 <div class="file-icon">
                     <a th:href="@{'/storage/my/' + ${folder.path != null ? #strings.substring(folder.path, 0, folder.path.lastIndexOf('/')) : '/' + #strings.replace(folder.name, '/', '')}}">
-                        <span th:text="${folder.name}">Имя папки</span>
+                        <span th:title="${folder.name}" th:text="${folder.name.length() > 15 ? folder.name.substring(0, 10)  : folder.name}">Имя папки</span>
                     </a>
                 </div>
             </div>
@@ -90,7 +90,8 @@
                 <img th:src="@{/images/file.png}" height="70">
                 <div class="file-icon">
                     <a th:href="@{'/storage/my/' + ${file.folder != null ? #strings.substring(file.folder.path, 0, file.folder.path.lastIndexOf('/')) : ''}}">
-                        <span th:text="${file.name}">Имя файла</span>
+                        <span th:title="${file.name}"
+                              th:text="${file.name.length() > 15 ? file.name.substring(0, 10) + '...' + file.name.substring(file.name.lastIndexOf('.')) : file.name}"> Имя файла</span>
                     </a>
                 </div>
             </div>
