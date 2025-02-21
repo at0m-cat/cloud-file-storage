@@ -1,13 +1,16 @@
 package matveyodintsov.cloudfilestorage.service;
 
+import io.minio.Result;
+import io.minio.messages.Item;
 import matveyodintsov.cloudfilestorage.repository.CloudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class CloudService {
@@ -20,15 +23,19 @@ public class CloudService {
     }
 
     public InputStream downloadFile(String filePath) {
-        return cloudRepository.downloadFile(filePath);
+        try {
+            return cloudRepository.getObject(filePath);
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при скачивании файла: " + e.getMessage(), e);
+        }
     }
 
     public InputStream downloadSelectedFiles(List<String> filePaths) {
-        return cloudRepository.downloadSelectedFiles(filePaths);
+        return zipFiles(filePaths);
     }
 
     public InputStream downloadFolder(String folderPath) {
-        return cloudRepository.downloadFolder(folderPath);
+        return zipFolder(folderPath);
     }
 
     public void createFolder(String folderPath) {
@@ -53,6 +60,61 @@ public class CloudService {
 
     public void deleteFolder(String folderPath) {
         cloudRepository.deleteFolder(folderPath);
+    }
+
+    private InputStream zipFiles(List<String> filePaths) {
+        try {
+            File zipFile = File.createTempFile("selected_files", ".zip");
+            zipFile.deleteOnExit();
+
+            try (FileOutputStream fos = new FileOutputStream(zipFile);
+                 ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(fos))) {
+
+                for (String filePath : filePaths) {
+                    addFileToZip(filePath, zipOut, new File(filePath).getName());
+                }
+            }
+            return new FileInputStream(zipFile);
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при создании ZIP-архива: " + e.getMessage(), e);
+        }
+    }
+
+    private InputStream zipFolder(String folderPath) {
+        try {
+            File zipFile = File.createTempFile("folder", ".zip");
+            zipFile.deleteOnExit();
+
+            try (FileOutputStream fos = new FileOutputStream(zipFile);
+                 ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(fos))) {
+
+                Iterable<Result<Item>> objects = cloudRepository.listObjects(folderPath);
+                for (Result<Item> result : objects) {
+                    String objectPath = result.get().objectName();
+
+                    if (objectPath.equals(folderPath)) {
+                        continue;
+                    }
+
+                    String relativePath = objectPath.substring(folderPath.length()); // Убираем абсолютный путь
+                    addFileToZip(objectPath, zipOut, relativePath);
+                }
+            }
+            return new FileInputStream(zipFile);
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при создании ZIP-файла: " + e.getMessage(), e);
+        }
+    }
+
+    private void addFileToZip(String filePath, ZipOutputStream zipOut, String zipEntryName) {
+        try (InputStream fileStream = cloudRepository.getObject(filePath)) {
+            zipOut.putNextEntry(new ZipEntry(zipEntryName));
+
+            fileStream.transferTo(zipOut);
+            zipOut.closeEntry();
+        } catch (Exception e) {
+            System.err.println("Ошибка при добавлении файла в ZIP архив: " + e.getMessage());
+        }
     }
 
 }

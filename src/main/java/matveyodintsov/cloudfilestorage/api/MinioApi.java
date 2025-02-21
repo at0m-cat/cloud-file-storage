@@ -20,6 +20,25 @@ public class MinioApi {
         this.minioClient = minioClient;
     }
 
+    public InputStream getObject(String filePath) throws Exception {
+        return minioClient.getObject(
+                GetObjectArgs.builder()
+                        .bucket(SecurityUtil.getSessionUser())
+                        .object(filePath)
+                        .build()
+        );
+    }
+
+    public Iterable<Result<Item>> listObjects(String path) {
+        return minioClient.listObjects(
+                ListObjectsArgs.builder()
+                        .bucket(SecurityUtil.getSessionUser())
+                        .prefix(path)
+                        .recursive(true)
+                        .build()
+        );
+    }
+
     protected void createBucketOrElseVoid() throws Exception {
         String bucketName = SecurityUtil.getSessionUser();
         boolean bucketExists = minioClient.bucketExists(
@@ -28,15 +47,6 @@ public class MinioApi {
         if (!bucketExists) {
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
         }
-    }
-
-    protected InputStream getObject(String filePath) throws Exception {
-        return minioClient.getObject(
-                GetObjectArgs.builder()
-                        .bucket(SecurityUtil.getSessionUser())
-                        .object(filePath)
-                        .build()
-        );
     }
 
     protected void copy(String oldPath, String newPath) throws Exception {
@@ -73,16 +83,6 @@ public class MinioApi {
                         .bucket(SecurityUtil.getSessionUser())
                         .object(folderPath)
                         .stream(new ByteArrayInputStream(new byte[0]), 0, -1)
-                        .build()
-        );
-    }
-
-    protected Iterable<Result<Item>> listObjects(String path) {
-        return minioClient.listObjects(
-                ListObjectsArgs.builder()
-                        .bucket(SecurityUtil.getSessionUser())
-                        .prefix(path)
-                        .recursive(true)
                         .build()
         );
     }
