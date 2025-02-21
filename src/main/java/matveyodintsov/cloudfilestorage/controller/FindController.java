@@ -7,9 +7,10 @@ import matveyodintsov.cloudfilestorage.service.FileService;
 import matveyodintsov.cloudfilestorage.service.FolderService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class FindController {
         this.fileService = fileService;
         this.folderService = folderService;
     }
+
     @GetMapping
     public String find(@RequestParam(value = "file", required = false) String file,
                        @RequestParam(value = "folder", required = false) String folder,

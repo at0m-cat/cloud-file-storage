@@ -91,13 +91,4 @@ public class DownloadController {
         }
     }
 
-    @GetMapping("/find-file")
-    public void downloadFindFile(@RequestParam("file") List<String> file, HttpServletResponse response) {
-
-    }
-
-    @GetMapping("/find-folder")
-    public void downloadFindFolder(@RequestParam("folder") String folder, HttpServletResponse response) {
-
-    }
 }

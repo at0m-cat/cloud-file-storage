@@ -51,16 +51,5 @@ public class RenameController {
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
 
-    @PostMapping("/find-file")
-    public String renameFindFile(@RequestParam("oldName") String oldName, @RequestParam("newName") String newName) {
-
-        return "redirect:/storage";
-    }
-
-    @PostMapping("/find-folder")
-    public String renameFindFolder(@RequestParam("oldName") String oldName, @RequestParam("newName") String newName) {
-
-        return "redirect:/storage";
-    }
 
 }

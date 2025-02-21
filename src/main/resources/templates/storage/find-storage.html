@@ -2,9 +2,9 @@
 <html lang="ru" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Atom Cloud - Storage</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link href="/css/style.css" rel="stylesheet">
     <script src="/js/ui.js"></script>
 </head>
 <body>
@@ -13,70 +13,68 @@
 
     <div>
         <aside class="sidebar">
+
             <div id="findForm">
                 <h2>Поиск файлов и папок</h2>
                 <form action="/storage/find" method="get">
-                    <input type="text" name="file" placeholder="Имя файла">
+                    <input name="file" placeholder="Имя файла" type="text">
                     <button type="submit">Найти файл</button>
                 </form>
                 <form action="/storage/find" method="get">
-                    <input type="text" name="folder" placeholder="Имя папки">
+                    <input name="folder" placeholder="Имя папки" type="text">
                     <button type="submit">Найти папку</button>
                 </form>
                 <form action="/storage" method="get">
                     <button type="submit">Вернуться в хранилище</button>
                 </form>
-
             </div>
 
-            <div id="fileActions" class="hidden">
-                <h2>Выбрано файлов: <span id="selectedFileCount">0</span></h2>
-                <form action="/storage/download/find-file" method="get" id="downloadFileForm">
-                    <input type="hidden" name="file" id="downloadFileIds">
-                    <button type="submit">Скачать</button>
-                </form>
-                <form action="/storage/rename/find-file" method="post" id="renameFileForm">
-                    <input type="hidden" name="oldName" id="renameFileId">
-                    <input type="text" name="newName" placeholder="Новое имя" required>
-                    <button type="submit">Переименовать</button>
-                </form>
-                <form action="/storage/delete/find-file" method="post" id="deleteFileForm">
-                    <input type="hidden" name="file" id="deleteFileIds">
-                    <button type="submit">Удалить</button>
-                </form>
-            </div>
+<!--            <div id="fileActions" class="hidden">-->
+<!--                <h2>Выбрано файлов: <span id="selectedFileCount">0</span></h2>-->
+<!--                <form action="/storage/download/find-file" method="get" id="downloadFileForm">-->
+<!--                    <input type="hidden" name="file" id="downloadFileIds">-->
+<!--                    <button type="submit">Скачать</button>-->
+<!--                </form>-->
+<!--                <form action="/storage/rename/find-file" method="post" id="renameFileForm">-->
+<!--                    <input type="hidden" name="oldName" id="renameFileId">-->
+<!--                    <input type="text" name="newName" placeholder="Новое имя" required>-->
+<!--                    <button type="submit">Переименовать</button>-->
+<!--                </form>-->
+<!--                <form action="/storage/delete/find-file" method="post" id="deleteFileForm">-->
+<!--                    <input type="hidden" name="file" id="deleteFileIds">-->
+<!--                    <button type="submit">Удалить</button>-->
+<!--                </form>-->
+<!--            </div>-->
 
-            <div id="folderActions" class="hidden">
-                <h2>Выбрано папок: <span id="selectedFolderCount">0</span></h2>
-                <form action="/storage/download/find-folder" method="get" id="downloadFolderForm">
-                    <input type="hidden" name="folder" id="downloadFolderIds">
-                    <button type="submit">Скачать</button>
-                </form>
-                <form action="/storage/rename/find-folder" method="post" id="renameFolderForm">
-                    <input type="hidden" name="oldName" id="renameFolderId">
-                    <input type="text" name="newName" placeholder="Новое имя" required>
-                    <button type="submit">Переименовать</button>
-                </form>
-                <form action="/storage/delete/find-folder" method="post" id="deleteFolderForm">
-                    <input type="hidden" name="folder" id="deleteFolderIds">
-                    <button type="submit">Удалить</button>
-                </form>
-            </div>
+<!--            <div id="folderActions" class="hidden">-->
+<!--                <h2>Выбрано папок: <span id="selectedFolderCount">0</span></h2>-->
+<!--                <form action="/storage/download/find-folder" method="get" id="downloadFolderForm">-->
+<!--                    <input type="hidden" name="folder" id="downloadFolderIds">-->
+<!--                    <button type="submit">Скачать</button>-->
+<!--                </form>-->
+<!--                <form action="/storage/rename/find-folder" method="post" id="renameFolderForm">-->
+<!--                    <input type="hidden" name="oldName" id="renameFolderId">-->
+<!--                    <input type="text" name="newName" placeholder="Новое имя" required>-->
+<!--                    <button type="submit">Переименовать</button>-->
+<!--                </form>-->
+<!--                <form action="/storage/delete/find-folder" method="post" id="deleteFolderForm">-->
+<!--                    <input type="hidden" name="folder" id="deleteFolderIds">-->
+<!--                    <button type="submit">Удалить</button>-->
+<!--                </form>-->
+<!--            </div>-->
             <p th:if="${cloudSizeByUser}">Занято: <span th:text="${cloudSizeByUser.toString}"></span> / 30 MB</p>
             <p th:unless="${cloudSizeByUser}"><span> Доступно 30 MB</span></p>
         </aside>
     </div>
 
     <main class="file-area">
-
         <nav>
             <span>Список найденных файлов: </span>
         </nav>
-
         <div class="file-grid">
             <div class="file-item" th:each="folder : ${folders}">
-                <input type="checkbox" class="folder-checkbox"
-                       th:value="${folder.path != null ? folder.path + folder.name : '/' + folder.name}">
+<!--                <input type="checkbox" class="folder-checkbox"-->
+<!--                       th:value="${folder.path != null ? folder.path + folder.name : '/' + folder.name}">-->
                 <img th:src="@{/images/folder.png}" height="70">
                 <div class="file-icon">
                     <a th:href="@{'/storage/my/' + ${folder.path != null ? #strings.substring(folder.path, 0, folder.path.lastIndexOf('/')) : '/' + #strings.replace(folder.name, '/', '')}}">
@@ -87,8 +85,8 @@
 
 
             <div class="file-item" th:each="file : ${files}">
-                <input type="checkbox" class="file-checkbox"
-                       th:value="${file.folder != null ? file.folder.path + file.name : '/' + file.name}">
+<!--                <input type="checkbox" class="file-checkbox"-->
+<!--                       th:value="${file.folder != null ? file.folder.path + file.name : '/' + file.name}">-->
                 <img th:src="@{/images/file.png}" height="70">
                 <div class="file-icon">
                     <a th:href="@{'/storage/my/' + ${file.folder != null ? #strings.substring(file.folder.path, 0, file.folder.path.lastIndexOf('/')) : ''}}">

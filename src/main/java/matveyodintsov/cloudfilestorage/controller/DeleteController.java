@@ -46,16 +46,4 @@ public class DeleteController {
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
     }
 
-    @PostMapping("/find-file")
-    public String deleteFindFile(@RequestParam("file") List<String> file) {
-
-        return "redirect:/storage";
-    }
-
-    @PostMapping("/find-folder")
-    public String deleteFindFolder(@RequestParam("file") List<String> file) {
-
-        return "redirect:/storage";
-    }
-
 }
