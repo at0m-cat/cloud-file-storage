@@ -1,6 +1,6 @@
 package matveyodintsov.cloudfilestorage.controller;
 
-import matveyodintsov.cloudfilestorage.security.SecurityUtil;
+import matveyodintsov.cloudfilestorage.config.security.SecurityUtil;
 import matveyodintsov.cloudfilestorage.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

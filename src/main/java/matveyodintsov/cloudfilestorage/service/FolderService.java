@@ -3,12 +3,11 @@ package matveyodintsov.cloudfilestorage.service;
 import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import matveyodintsov.cloudfilestorage.models.UserEntity;
 import matveyodintsov.cloudfilestorage.repository.FolderRepository;
-import matveyodintsov.cloudfilestorage.security.SecurityUtil;
+import matveyodintsov.cloudfilestorage.config.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;

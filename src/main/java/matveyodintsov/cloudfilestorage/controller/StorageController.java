@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import matveyodintsov.cloudfilestorage.config.Validator;
 import matveyodintsov.cloudfilestorage.models.FileEntity;
 import matveyodintsov.cloudfilestorage.models.FolderEntity;
-import matveyodintsov.cloudfilestorage.security.SecurityUtil;
+import matveyodintsov.cloudfilestorage.config.security.SecurityUtil;
 import matveyodintsov.cloudfilestorage.service.BreadcrumbService;
 import matveyodintsov.cloudfilestorage.service.FileService;
 import matveyodintsov.cloudfilestorage.service.FolderService;

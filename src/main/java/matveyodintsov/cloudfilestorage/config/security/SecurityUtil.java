@@ -1,4 +1,4 @@
-package matveyodintsov.cloudfilestorage.security;
+package matveyodintsov.cloudfilestorage.config.security;
 
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;

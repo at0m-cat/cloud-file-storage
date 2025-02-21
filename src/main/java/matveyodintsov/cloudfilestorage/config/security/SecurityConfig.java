@@ -1,4 +1,4 @@
-package matveyodintsov.cloudfilestorage.security;
+package matveyodintsov.cloudfilestorage.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

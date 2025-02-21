@@ -1,4 +1,4 @@
-package matveyodintsov.cloudfilestorage.security;
+package matveyodintsov.cloudfilestorage.config.security;
 
 import matveyodintsov.cloudfilestorage.models.UserEntity;
 import matveyodintsov.cloudfilestorage.repository.UserRepository;

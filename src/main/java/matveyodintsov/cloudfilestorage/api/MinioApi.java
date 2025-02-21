@@ -2,7 +2,7 @@ package matveyodintsov.cloudfilestorage.api;
 
 import io.minio.*;
 import io.minio.messages.Item;
-import matveyodintsov.cloudfilestorage.security.SecurityUtil;
+import matveyodintsov.cloudfilestorage.config.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
