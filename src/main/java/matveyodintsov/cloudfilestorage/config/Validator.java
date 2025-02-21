@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 public class Validator {
 
     private static final String REGEX_VALID_NAME = "^(?!.*\\s{2})[а-яА-Яa-zA-Z0-9_\\-\\s]{1,255}$";
+    public static final String LOGIN_REGEX = "^(?![-.])[a-zA-Z0-9._-]{4,20}(?<![-.])$";
 
     public static class Url {
         public static String encode(String url) {
@@ -30,12 +31,16 @@ public class Validator {
 
         public static String getValidFilename(String oldName, String newName) {
             String fileExtension = oldName.substring(oldName.lastIndexOf("."));
-            String newFilename = getValidFoldername(newName);
+            String newFilename = getValidFolderName(newName);
 
             return newFilename + fileExtension;
         }
 
-        public static String getValidFoldername(String newName) {
+        public static boolean isValidLogin(String userName) {
+            return userName.matches(LOGIN_REGEX);
+        }
+
+        public static String getValidFolderName(String newName) {
             String validName = newName.trim();
             if (!validName.matches(REGEX_VALID_NAME)) {
                 throw new RuntimeException("Недопустимое имя файла. " +

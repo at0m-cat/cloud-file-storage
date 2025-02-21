@@ -61,7 +61,6 @@
                 <button type="submit">Удалить</button>
             </form>
         </div>
-        <p th:if="${cloudSizeByUser}">Занято: <span th:text="${cloudSizeByUser.toString}"></span> / 30 MB</p>
-        <p th:unless="${cloudSizeByUser}"> <span> Доступно 30 MB</span></p>
+        <p th:if="${cloudSizeByUser}">Занято: <span th:text="${cloudSizeByUser.toString}"></span> MB</p>
     </aside>
 </div>

@@ -42,7 +42,7 @@ public class RenameController {
     public String renameFolder(@RequestParam("path") String path,
                                @RequestParam("oldName") String oldName, @RequestParam("newName") String newName) {
         String decodedPath = Validator.Url.decode(path);
-        String folderName = Validator.ContentName.getValidFoldername(newName);
+        String folderName = Validator.ContentName.getValidFolderName(newName);
 
         filesAndFoldersChecker.checkFolderNameOrThrow(decodedPath, folderName);
 
