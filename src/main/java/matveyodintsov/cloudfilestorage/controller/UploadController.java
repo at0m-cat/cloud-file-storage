@@ -50,9 +50,10 @@ public class UploadController {
     }
 
     @PostMapping("/folder")
-    public String insertFolder(@RequestParam("folder") MultipartFile file, @RequestParam("path") String path) {
+    public String insertFolder(@RequestParam("folder") MultipartFile folder, @RequestParam("path") String path) {
         String decodedPath = Validator.Url.decode(path);
-        String fileName = file.getOriginalFilename();
+
+        String fileName = folder.getOriginalFilename();
         if (fileName == null || fileName.isEmpty()) {
             throw new RuntimeException("Файл должен содержать имя");
         }

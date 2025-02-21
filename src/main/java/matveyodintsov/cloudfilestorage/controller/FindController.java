@@ -7,14 +7,14 @@ import matveyodintsov.cloudfilestorage.service.FileService;
 import matveyodintsov.cloudfilestorage.service.FolderService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
-@RequestMapping("/storage/finded")
+@RequestMapping("/storage/find")
 public class FindController {
 
     private final FileService fileService;
@@ -24,33 +24,23 @@ public class FindController {
         this.fileService = fileService;
         this.folderService = folderService;
     }
+    @GetMapping
+    public String find(@RequestParam(value = "file", required = false) String file,
+                       @RequestParam(value = "folder", required = false) String folder,
+                       Model model) {
 
-    @PostMapping("/files")
-    public String findFile(@RequestParam("file") String file, Model model) {
-        List<FileEntity> findFile = fileService.findByNameLikeAndUserLogin(file, SecurityUtil.getSessionUser());
+        String login = SecurityUtil.getSessionUser();
 
-        if (findFile.isEmpty()) {
-            throw new RuntimeException("Файлов с таким именем не найдено");
-        }
+        List<FileEntity> findFiles = (file != null && !file.isEmpty()) ?
+                fileService.findByNameLikeAndUserLogin(file, login) : Collections.emptyList();
 
-        model.addAttribute("files", findFile);
-        model.addAttribute("cloudSizeByUser", fileService.getSizeRepository(SecurityUtil.getSessionUser()));
-        model.addAttribute("user", SecurityUtil.getSessionUser());
+        List<FolderEntity> findFolders = (folder != null && !folder.isEmpty()) ?
+                folderService.findByNameLikeAndUserLogin(folder, login) : Collections.emptyList();
 
-        return "storage/find-storage";
-    }
-
-    @PostMapping("/folders")
-    public String findFolder(@RequestParam("folder") String folder, Model model) {
-        List<FolderEntity> findFolder = folderService.findByNameLikeAndUserLogin(folder, SecurityUtil.getSessionUser());
-
-        if (findFolder.isEmpty()) {
-            throw new RuntimeException("Папок с таким именем не найдено");
-        }
-
-        model.addAttribute("folders", findFolder);
-        model.addAttribute("cloudSizeByUser", fileService.getSizeRepository(SecurityUtil.getSessionUser()));
-        model.addAttribute("user", SecurityUtil.getSessionUser());
+        model.addAttribute("files", findFiles);
+        model.addAttribute("folders", findFolders);
+        model.addAttribute("user", login);
+        model.addAttribute("cloudSizeByUser", fileService.getSizeRepository(login));
 
         return "storage/find-storage";
     }

@@ -16,13 +16,8 @@
 
         <div id="findForm">
             <h2>Поиск файлов и папок</h2>
-            <form action="/storage/finded/files" method="post">
-                <input type="text" name="file" placeholder="Имя файла" required>
-                <button type="submit">Найти файл</button>
-            </form>
-            <form action="/storage/finded/folders" method="post">
-                <input type="text" name="folder" placeholder="Имя папки" required>
-                <button type="submit">Найти папку</button>
+            <form action="/storage/find" method="get">
+                <button type="submit">Перейти к поиску</button>
             </form>
         </div>
 
