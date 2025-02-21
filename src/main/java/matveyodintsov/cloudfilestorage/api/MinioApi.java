@@ -11,7 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 @Component
-public class MinioApi {
+public final class MinioApi {
 
     private final MinioClient minioClient;
 
@@ -39,7 +39,7 @@ public class MinioApi {
         );
     }
 
-    protected void createBucketOrElseVoid() throws Exception {
+    public void createBucketOrElseVoid() throws Exception {
         String bucketName = SecurityUtil.getSessionUser();
         boolean bucketExists = minioClient.bucketExists(
                 BucketExistsArgs.builder().bucket(bucketName).build()
@@ -49,7 +49,7 @@ public class MinioApi {
         }
     }
 
-    protected void copy(String oldPath, String newPath) throws Exception {
+    public void copy(String oldPath, String newPath) throws Exception {
         minioClient.copyObject(
                 CopyObjectArgs.builder()
                         .bucket(SecurityUtil.getSessionUser())
@@ -64,7 +64,7 @@ public class MinioApi {
         );
     }
 
-    protected void putObject(MultipartFile file, String filePath) throws Exception {
+    public void putObject(MultipartFile file, String filePath) throws Exception {
         try (InputStream inputStream = file.getInputStream()) {
             minioClient.putObject(
                     PutObjectArgs.builder()
@@ -77,7 +77,7 @@ public class MinioApi {
         }
     }
 
-    protected void putObject(String folderPath) throws Exception {
+    public void putObject(String folderPath) throws Exception {
         minioClient.putObject(
                 PutObjectArgs.builder()
                         .bucket(SecurityUtil.getSessionUser())
@@ -87,7 +87,7 @@ public class MinioApi {
         );
     }
 
-    protected void delete(String path) throws Exception {
+    public void delete(String path) throws Exception {
         minioClient.removeObject(
                 RemoveObjectArgs.builder()
                         .bucket(SecurityUtil.getSessionUser())
