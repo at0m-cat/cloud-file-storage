@@ -7,7 +7,6 @@ import java.nio.charset.StandardCharsets;
 public class Validator {
 
     private static final String REGEX_VALID_NAME = "^(?!.*\\s{2})[а-яА-Яa-zA-Z0-9_\\-\\s]{1,255}$";
-//    private static final Long FILE_SIZE = 10L;
 
     public static class Url {
         public static String encode(String url) {

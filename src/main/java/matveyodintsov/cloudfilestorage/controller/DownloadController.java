@@ -90,4 +90,14 @@ public class DownloadController {
             throw new RuntimeException("Ошибка при скачивании ZIP-файла: " + e.getMessage(), e);
         }
     }
+
+    @GetMapping("/find-file")
+    public void downloadFindFile(@RequestParam("file") List<String> file, HttpServletResponse response) {
+
+    }
+
+    @GetMapping("/find-folder")
+    public void downloadFindFolder(@RequestParam("folder") String folder, HttpServletResponse response) {
+
+    }
 }
