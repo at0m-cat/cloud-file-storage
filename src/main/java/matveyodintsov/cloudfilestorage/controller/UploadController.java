@@ -2,9 +2,6 @@ package matveyodintsov.cloudfilestorage.controller;
 
 import matveyodintsov.cloudfilestorage.config.FilesAndFoldersChecker;
 import matveyodintsov.cloudfilestorage.config.Validator;
-import matveyodintsov.cloudfilestorage.config.security.SecurityUtil;
-import matveyodintsov.cloudfilestorage.models.FileEntity;
-import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import matveyodintsov.cloudfilestorage.service.FileService;
 import matveyodintsov.cloudfilestorage.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Controller

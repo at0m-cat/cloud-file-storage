@@ -19,7 +19,11 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void save(UserRegisterDto userRegisterDto) {
+    public void createUser(UserRegisterDto userRegisterDto) throws RuntimeException {
+        if (userRepository.existsByLogin(userRegisterDto.getLogin())) {
+            throw new RuntimeException("Login already exists");
+        }
+
         UserEntity userEntity = mapToEntity(userRegisterDto);
         userRepository.save(userEntity);
     }

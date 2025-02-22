@@ -1,4 +1,4 @@
-package matveyodintsov.cloudfilestorage.config;
+package matveyodintsov.cloudfilestorage.controller;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;

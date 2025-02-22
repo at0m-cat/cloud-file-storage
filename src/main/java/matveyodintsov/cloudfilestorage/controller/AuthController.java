@@ -1,8 +1,8 @@
 package matveyodintsov.cloudfilestorage.controller;
 
 import matveyodintsov.cloudfilestorage.config.Validator;
-import matveyodintsov.cloudfilestorage.dto.UserRegisterDto;
 import matveyodintsov.cloudfilestorage.config.security.SecurityUtil;
+import matveyodintsov.cloudfilestorage.dto.UserRegisterDto;
 import matveyodintsov.cloudfilestorage.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -56,11 +56,11 @@ public class AuthController {
             return "/auth/register-error";
         }
 
-        if (userService.existsByLogin(login)) {
+        try {
+            userService.createUser(userRegisterDto);
+        } catch (RuntimeException e) {
             return "/auth/register-error";
         }
-
-        userService.save(userRegisterDto);
 
         return "/auth/register-successfully";
     }
