@@ -21,7 +21,7 @@ public class UserService {
 
     public void createUser(UserRegisterDto userRegisterDto) throws RuntimeException {
         if (userRepository.existsByLogin(userRegisterDto.getLogin())) {
-            throw new RuntimeException("Login already exists");
+            throw new RuntimeException("Пользователь уже зарегистрирован");
         }
 
         UserEntity userEntity = mapToEntity(userRegisterDto);
