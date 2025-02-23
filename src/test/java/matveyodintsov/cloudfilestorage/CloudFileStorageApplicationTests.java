@@ -1,21 +1,27 @@
 package matveyodintsov.cloudfilestorage;
 
+import matveyodintsov.cloudfilestorage.dto.UserRegisterDto;
 import matveyodintsov.cloudfilestorage.models.FileEntity;
 import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import matveyodintsov.cloudfilestorage.models.UserEntity;
 import matveyodintsov.cloudfilestorage.repository.FileRepository;
 import matveyodintsov.cloudfilestorage.repository.FolderRepository;
 import matveyodintsov.cloudfilestorage.repository.UserRepository;
-import org.junit.jupiter.api.*;
+import matveyodintsov.cloudfilestorage.service.FileService;
+import matveyodintsov.cloudfilestorage.service.FolderService;
+import matveyodintsov.cloudfilestorage.service.UserService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Testcontainers
@@ -34,7 +40,14 @@ class CloudFileStorageApplicationTests {
     @Autowired
     private FolderRepository folderRepository;
 
-    private TestRestTemplate restTemplate = new TestRestTemplate();
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private FileService fileService;
+
+    @Autowired
+    FolderService folderService;
 
     private static final PostgreSQLContainer<?> postgres;
 
@@ -100,12 +113,22 @@ class CloudFileStorageApplicationTests {
         userRepository.deleteAll();
     }
 
+
     @Test
-    public void testCreateUserWhenUserExists() {
-        UserEntity user = new UserEntity();
+    public void createUserWhenUserExists() {
+        UserRegisterDto user = new UserRegisterDto();
         user.setLogin("user-1");
         user.setPassword("password");
-        assertThrows(RuntimeException.class, () -> userRepository.save(user));
+        assertThrows(RuntimeException.class, () -> userService.createUser(user));
+    }
+
+    @Test
+    public void createUserWhenUserDoesNotExist() {
+        UserRegisterDto user = new UserRegisterDto();
+        user.setLogin("user-new");
+        user.setPassword("password");
+        user.setRepeatPassword("password");
+        userService.createUser(user);
     }
 
 }
