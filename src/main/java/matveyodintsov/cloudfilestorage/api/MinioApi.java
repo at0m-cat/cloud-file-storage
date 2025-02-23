@@ -2,7 +2,8 @@ package matveyodintsov.cloudfilestorage.api;
 
 import io.minio.*;
 import io.minio.messages.Item;
-import matveyodintsov.cloudfilestorage.config.security.SecurityUtil;
+import jakarta.annotation.PostConstruct;
+import matveyodintsov.cloudfilestorage.config.AppConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +15,7 @@ import java.io.InputStream;
 public final class MinioApi {
 
     private final MinioClient minioClient;
+    private final String bucket = AppConfig.BUCKET_NAME;
 
     @Autowired
     public MinioApi(MinioClient minioClient) {
@@ -23,7 +25,7 @@ public final class MinioApi {
     public InputStream getObject(String filePath) throws Exception {
         return minioClient.getObject(
                 GetObjectArgs.builder()
-                        .bucket(SecurityUtil.getSessionUser())
+                        .bucket(bucket)
                         .object(filePath)
                         .build()
         );
@@ -32,31 +34,21 @@ public final class MinioApi {
     public Iterable<Result<Item>> listObjects(String path) {
         return minioClient.listObjects(
                 ListObjectsArgs.builder()
-                        .bucket(SecurityUtil.getSessionUser())
+                        .bucket(bucket)
                         .prefix(path)
                         .recursive(true)
                         .build()
         );
     }
 
-    public void createBucketOrElseVoid() throws Exception {
-        String bucketName = SecurityUtil.getSessionUser();
-        boolean bucketExists = minioClient.bucketExists(
-                BucketExistsArgs.builder().bucket(bucketName).build()
-        );
-        if (!bucketExists) {
-            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
-        }
-    }
-
     public void copy(String oldPath, String newPath) throws Exception {
         minioClient.copyObject(
                 CopyObjectArgs.builder()
-                        .bucket(SecurityUtil.getSessionUser())
+                        .bucket(bucket)
                         .object(newPath)
                         .source(
                                 CopySource.builder()
-                                        .bucket(SecurityUtil.getSessionUser())
+                                        .bucket(bucket)
                                         .object(oldPath)
                                         .build()
                         )
@@ -68,7 +60,7 @@ public final class MinioApi {
         try (InputStream inputStream = file.getInputStream()) {
             minioClient.putObject(
                     PutObjectArgs.builder()
-                            .bucket(SecurityUtil.getSessionUser())
+                            .bucket(bucket)
                             .object(filePath)
                             .stream(inputStream, file.getSize(), -1)
                             .contentType(file.getContentType())
@@ -80,7 +72,7 @@ public final class MinioApi {
     public void putObject(String folderPath) throws Exception {
         minioClient.putObject(
                 PutObjectArgs.builder()
-                        .bucket(SecurityUtil.getSessionUser())
+                        .bucket(bucket)
                         .object(folderPath)
                         .stream(new ByteArrayInputStream(new byte[0]), 0, -1)
                         .build()
@@ -90,10 +82,24 @@ public final class MinioApi {
     public void delete(String path) throws Exception {
         minioClient.removeObject(
                 RemoveObjectArgs.builder()
-                        .bucket(SecurityUtil.getSessionUser())
+                        .bucket(bucket)
                         .object(path)
                         .build()
         );
+    }
+
+    @PostConstruct
+    private void initialBucket() {
+        try {
+            boolean isExist = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
+            if (!isExist) {
+                minioClient.makeBucket(MakeBucketArgs.builder()
+                        .bucket(bucket)
+                        .build());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Ошибка при создании корзины: " + e.getMessage());
+        }
     }
 
 }

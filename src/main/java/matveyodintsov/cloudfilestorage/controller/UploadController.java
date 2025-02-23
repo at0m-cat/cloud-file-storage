@@ -1,7 +1,7 @@
 package matveyodintsov.cloudfilestorage.controller;
 
 import matveyodintsov.cloudfilestorage.config.FilesAndFoldersChecker;
-import matveyodintsov.cloudfilestorage.config.Validator;
+import matveyodintsov.cloudfilestorage.config.AppConfig;
 import matveyodintsov.cloudfilestorage.service.FileService;
 import matveyodintsov.cloudfilestorage.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class UploadController {
 
     @PostMapping("/file")
     public String insertFile(@RequestParam("file") List<MultipartFile> file, @RequestParam("path") String path) {
-        String decodedPath = Validator.Url.decode(path);
+        String decodedPath = AppConfig.Url.decode(path);
 
         for (MultipartFile fileEntity : file) {
 
@@ -45,12 +45,12 @@ public class UploadController {
             fileService.insert(fileEntity, decodedPath);
         }
 
-        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + AppConfig.Url.cross(decodedPath);
     }
 
     @PostMapping("/folder")
     public String insertFolder(@RequestParam("folder") MultipartFile folder, @RequestParam("path") String path) {
-        String decodedPath = Validator.Url.decode(path);
+        String decodedPath = AppConfig.Url.decode(path);
 
         String fileName = folder.getOriginalFilename();
         if (fileName == null || fileName.isEmpty()) {
@@ -61,7 +61,7 @@ public class UploadController {
 
         // folder service -> insert folder
 
-        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + AppConfig.Url.cross(decodedPath);
     }
 
 }

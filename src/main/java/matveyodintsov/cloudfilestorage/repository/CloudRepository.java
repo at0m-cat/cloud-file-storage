@@ -20,7 +20,6 @@ public class CloudRepository {
 
     public void insertFile(MultipartFile file, String filePath) {
         try {
-            minioApi.createBucketOrElseVoid();
             minioApi.putObject(file, filePath);
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при добавлении файла: " + e.getMessage(), e);
@@ -29,7 +28,6 @@ public class CloudRepository {
 
     public void createFolder(String folderPath) {
         try {
-            minioApi.createBucketOrElseVoid();
             minioApi.putObject(folderPath);
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при создании папки: " + e.getMessage(), e);

@@ -1,6 +1,6 @@
 package matveyodintsov.cloudfilestorage.controller;
 
-import matveyodintsov.cloudfilestorage.config.Validator;
+import matveyodintsov.cloudfilestorage.config.AppConfig;
 import matveyodintsov.cloudfilestorage.config.security.SecurityUtil;
 import matveyodintsov.cloudfilestorage.dto.UserRegisterDto;
 import matveyodintsov.cloudfilestorage.service.UserService;
@@ -48,7 +48,7 @@ public class AuthController {
         String password = userRegisterDto.getPassword();
         String repeatPassword = userRegisterDto.getRepeatPassword();
 
-        if (!Validator.ContentName.isValidLogin(login)) {
+        if (!AppConfig.ContentName.isValidLogin(login)) {
             return "auth/register-error";
         }
 

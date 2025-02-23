@@ -1,24 +1,16 @@
 package matveyodintsov.cloudfilestorage.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import matveyodintsov.cloudfilestorage.config.Validator;
-import matveyodintsov.cloudfilestorage.models.FileEntity;
+import matveyodintsov.cloudfilestorage.config.AppConfig;
 import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import matveyodintsov.cloudfilestorage.config.security.SecurityUtil;
 import matveyodintsov.cloudfilestorage.service.BreadcrumbService;
 import matveyodintsov.cloudfilestorage.service.FileService;
 import matveyodintsov.cloudfilestorage.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Controller
 public class StorageController {
@@ -63,8 +55,8 @@ public class StorageController {
             return "redirect:/storage";
         }
 
-        String fullPath = Validator.Url.decode(path.replace("/storage/my/", ""));
-        String encodedPath = Validator.Url.encode(fullPath);
+        String fullPath = AppConfig.Url.decode(path.replace("/storage/my/", ""));
+        String encodedPath = AppConfig.Url.encode(fullPath);
 
         if (encodedPath.isEmpty()) {
             return "redirect:/storage";

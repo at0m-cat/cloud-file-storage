@@ -1,6 +1,6 @@
 package matveyodintsov.cloudfilestorage.controller;
 
-import matveyodintsov.cloudfilestorage.config.Validator;
+import matveyodintsov.cloudfilestorage.config.AppConfig;
 import matveyodintsov.cloudfilestorage.service.FileService;
 import matveyodintsov.cloudfilestorage.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,24 +26,24 @@ public class DeleteController {
 
     @PostMapping("/file")
     public String deleteFile(@RequestParam("file") List<String> file, @RequestParam("path") String path) {
-        String decodedPath = Validator.Url.decode(path);
+        String decodedPath = AppConfig.Url.decode(path);
 
         for (String files : file) {
             fileService.delete(decodedPath, files);
         }
 
-        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + AppConfig.Url.cross(decodedPath);
     }
 
     @PostMapping("/folder")
     public String deleteFolder(@RequestParam("folder") List<String> folder, @RequestParam("path") String path) {
-        String decodedPath = Validator.Url.decode(path);
+        String decodedPath = AppConfig.Url.decode(path);
 
         for (String folders : folder) {
             folderService.delete(decodedPath, folders);
         }
 
-        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + AppConfig.Url.cross(decodedPath);
     }
 
 }

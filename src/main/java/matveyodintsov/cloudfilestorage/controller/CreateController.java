@@ -1,7 +1,7 @@
 package matveyodintsov.cloudfilestorage.controller;
 
 import matveyodintsov.cloudfilestorage.config.FilesAndFoldersChecker;
-import matveyodintsov.cloudfilestorage.config.Validator;
+import matveyodintsov.cloudfilestorage.config.AppConfig;
 import matveyodintsov.cloudfilestorage.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,14 +24,14 @@ public class CreateController {
 
     @PostMapping("/folder")
     public String createFolder(@RequestParam("folder") String folder, @RequestParam("path") String path) {
-        String decodedPath = Validator.Url.decode(path);
-        String filename = Validator.ContentName.getValidFolderName(folder);
+        String decodedPath = AppConfig.Url.decode(path);
+        String filename = AppConfig.ContentName.getValidFolderName(folder);
 
         filesAndFoldersChecker.checkFolderNameOrThrow(decodedPath, filename);
 
         folderService.create(decodedPath, filename);
 
-        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + Validator.Url.cross(decodedPath);
+        return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + AppConfig.Url.cross(decodedPath);
     }
 
 }

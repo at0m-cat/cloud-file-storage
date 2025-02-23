@@ -2,6 +2,7 @@ package matveyodintsov.cloudfilestorage.service;
 
 import io.minio.Result;
 import io.minio.messages.Item;
+import matveyodintsov.cloudfilestorage.config.security.SecurityUtil;
 import matveyodintsov.cloudfilestorage.repository.CloudRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,42 +25,42 @@ public class CloudService {
 
     public InputStream downloadFile(String filePath) {
         try {
-            return cloudRepository.getObject(filePath);
+            return cloudRepository.getObject(currentUserFolder(filePath));
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при скачивании файла: " + e.getMessage(), e);
         }
     }
 
     public InputStream downloadSelectedFiles(List<String> filePaths) {
-        return zipFiles(filePaths);
+        return zipFiles(filePaths.stream().map(this::currentUserFolder).toList());
     }
 
     public InputStream downloadFolder(String folderPath) {
-        return zipFolder(folderPath);
+        return zipFolder(currentUserFolder(folderPath));
     }
 
     public void createFolder(String folderPath) {
-        cloudRepository.createFolder(folderPath);
+        cloudRepository.createFolder(currentUserFolder(folderPath));
     }
 
     public void insertFile(MultipartFile file, String filePath) {
-        cloudRepository.insertFile(file, filePath);
+        cloudRepository.insertFile(file, currentUserFolder(filePath));
     }
 
     public void renameFile(String oldPath, String newPath) {
-        cloudRepository.renameFile(oldPath, newPath);
+        cloudRepository.renameFile(currentUserFolder(oldPath), currentUserFolder(newPath));
     }
 
-    public void renameFolder(String folderPath, String newFolderPath) {
-        cloudRepository.renameFolder(folderPath, newFolderPath);
+    public void renameFolder(String oldPath, String newPath) {
+        cloudRepository.renameFolder(currentUserFolder(oldPath), currentUserFolder(newPath));
     }
 
     public void deleteFile(String filePath) {
-        cloudRepository.deleteFile(filePath);
+        cloudRepository.deleteFile(currentUserFolder(filePath));
     }
 
     public void deleteFolder(String folderPath) {
-        cloudRepository.deleteFolder(folderPath);
+        cloudRepository.deleteFolder(currentUserFolder(folderPath));
     }
 
     private InputStream zipFiles(List<String> filePaths) {
@@ -96,8 +97,8 @@ public class CloudService {
                         continue;
                     }
 
-                    String relativePath = objectPath.substring(folderPath.length()); // Убираем абсолютный путь
-                    addFileToZip(objectPath, zipOut, relativePath);
+                    String relativePath = objectPath.substring(folderPath.length());
+                    addFileToZip(folderPath, zipOut, relativePath);
                 }
             }
             return new FileInputStream(zipFile);
@@ -115,6 +116,10 @@ public class CloudService {
         } catch (Exception e) {
             System.err.println("Ошибка при добавлении файла в ZIP архив: " + e.getMessage());
         }
+    }
+
+    private String currentUserFolder(String folderPath) {
+        return SecurityUtil.getSessionUser() + "/" + folderPath;
     }
 
 }

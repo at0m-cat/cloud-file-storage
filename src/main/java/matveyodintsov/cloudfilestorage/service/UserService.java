@@ -20,7 +20,7 @@ public class UserService {
     }
 
     public void createUser(UserRegisterDto userRegisterDto) throws RuntimeException {
-        if (userRepository.existsByLogin(userRegisterDto.getLogin())) {
+        if (existsByLogin(userRegisterDto.getLogin())) {
             throw new RuntimeException("Пользователь уже зарегистрирован");
         }
 
@@ -29,7 +29,7 @@ public class UserService {
     }
 
     public boolean existsByLogin(String login) {
-        return userRepository.existsByLogin(login);
+        return userRepository.existsByLoginIgnoreCase(login);
     }
 
     public UserEntity findByLogin(String login) {

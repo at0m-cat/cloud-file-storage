@@ -1,7 +1,7 @@
 package matveyodintsov.cloudfilestorage.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
-import matveyodintsov.cloudfilestorage.config.Validator;
+import matveyodintsov.cloudfilestorage.config.AppConfig;
 import matveyodintsov.cloudfilestorage.service.FileService;
 import matveyodintsov.cloudfilestorage.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class DownloadController {
             List<String> listDecodedPath = new ArrayList<>();
             for (String fileName : file) {
 
-                String filePathDecode = Validator.Url.decode(path + fileName);
+                String filePathDecode = AppConfig.Url.decode(path + fileName);
                 listDecodedPath.add(filePathDecode);
 
             }
@@ -51,7 +51,7 @@ public class DownloadController {
 
         } else {
 
-            String decodedPath = Validator.Url.decode(path + file.get(0));
+            String decodedPath = AppConfig.Url.decode(path + file.get(0));
             inputStream = fileService.download(decodedPath);
             filename = file.get(0);
 
@@ -73,8 +73,8 @@ public class DownloadController {
 
     @GetMapping("/folder")
     public void downloadFolder(@RequestParam("folder") String folder, @RequestParam("path") String path, HttpServletResponse response) {
-        String decodedPath = Validator.Url.decode(path + folder + "/");
-        String encodedFilename = Validator.Url.encode(folder);
+        String decodedPath = AppConfig.Url.decode(path + folder + "/");
+        String encodedFilename = AppConfig.Url.encode(folder);
 
         InputStream folderStream = folderService.download(decodedPath);
 
