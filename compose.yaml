@@ -5,8 +5,8 @@ services:
     image: minio/minio:latest
     container_name: minio_container
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - '9000:9000'
+      - '9001:9001'
     environment:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123
@@ -17,7 +17,7 @@ services:
     command: server /data --console-address ":9001"
     restart: unless-stopped
     networks:
-      - cloud_net
+      - container_network
 
   postgres:
     container_name: 'db'
@@ -27,21 +27,45 @@ services:
       - 'POSTGRES_PASSWORD=secret'
       - 'POSTGRES_USER=admin'
     ports:
-      - "5432:5432"
+      - '5432:5432'
     networks:
-      - cloud_net
+      - container_network
 
   redis:
     container_name: 'sessions-map'
     image: 'redis:latest'
+    restart: always
     ports:
       - '6379:6379'
     networks:
-      - cloud_net
+      - container_network
+
+  cloud_file_storage:
+    image: openjdk:17-jdk-slim
+    container_name: cloud_file_storage
+    working_dir: /app
+    volumes:
+      - ./target/cloud-file-storage-0.0.1-SNAPSHOT.jar:/app/app.jar
+      - ./src/main/resources/application.yml:/app/config/application.yml
+      - ./src/main/resources/templates:/app/resources/templates
+    environment:
+      SPRING_CONFIG_LOCATION: file:/app/config/application.yml
+    entrypoint: [ "java", "-jar", "/app/app.jar" ]
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    networks:
+      - container_network
+      - cloud_network
+    ports:
+      - "8080:8080"
 
 volumes:
   minio_data:
 
 networks:
-  cloud_net:
+  cloud_network:
     driver: bridge
+  container_network:
+    internal: true

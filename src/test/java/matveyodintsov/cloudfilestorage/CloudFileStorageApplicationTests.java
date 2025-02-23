@@ -39,7 +39,7 @@ class CloudFileStorageApplicationTests {
     private static final PostgreSQLContainer<?> postgres;
 
     static {
-        postgres = new PostgreSQLContainer<>("postgres:15")
+        postgres = new PostgreSQLContainer<>("postgres:15-alpine")
                 .withDatabaseName("testdb")
                 .withUsername("testuser")
                 .withPassword("testpass");

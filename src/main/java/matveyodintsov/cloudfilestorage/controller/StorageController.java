@@ -9,6 +9,7 @@ import matveyodintsov.cloudfilestorage.service.BreadcrumbService;
 import matveyodintsov.cloudfilestorage.service.FileService;
 import matveyodintsov.cloudfilestorage.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +41,7 @@ public class StorageController {
             model.addAttribute("user", login);
             model.addAttribute("cloudSizeByUser", fileService.getSizeRepository(login));
         }
-        return "/home/dashboard";
+        return "home/dashboard";
     }
 
     @GetMapping("/storage")

@@ -53,16 +53,16 @@ public class AuthController {
         }
 
         if (!password.equals(repeatPassword)) {
-            return "/auth/register-error";
+            return "auth/register-error";
         }
 
         try {
             userService.createUser(userRegisterDto);
         } catch (RuntimeException e) {
-            return "/auth/register-error";
+            return "auth/register-error";
         }
 
-        return "/auth/register-successfully";
+        return "auth/register-successfully";
     }
 
 }
