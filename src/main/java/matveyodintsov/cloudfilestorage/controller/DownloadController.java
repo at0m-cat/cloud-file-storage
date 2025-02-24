@@ -53,7 +53,7 @@ public class DownloadController {
 
             String decodedPath = AppConfig.Url.decode(path + file.get(0));
             inputStream = fileService.download(decodedPath);
-            filename = file.get(0);
+            filename = AppConfig.Url.encode(file.get(0));
 
         }
 

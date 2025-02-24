@@ -8,6 +8,11 @@
                 <input type="hidden" name="path" th:value="${path}" required>
                 <button type="submit">Загрузить файлы</button>
             </form>
+            <form action="/storage/upload/folder" method="post" enctype="multipart/form-data">
+                <input type="file" name="folder" required webkitdirectory multiple>
+                <input type="hidden" name="path" th:value="${path}" required>
+                <button type="submit">Загрузить папку</button>
+            </form>
             <form action="/storage/create/folder" method="post">
                 <input type="text" name="folder" placeholder="Имя папки" required>
                 <input type="hidden" name="path" th:value="${path}" required>

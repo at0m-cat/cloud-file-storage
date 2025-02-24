@@ -44,7 +44,9 @@ public class CloudService {
     }
 
     public void insertFile(MultipartFile file, String filePath) {
-        cloudRepository.insertFile(file, currentUserFolder(filePath));
+        if (!file.getOriginalFilename().matches("^(?![-.])")) {
+            cloudRepository.insertFile(file, currentUserFolder(filePath));
+        }
     }
 
     public void renameFile(String oldPath, String newPath) {

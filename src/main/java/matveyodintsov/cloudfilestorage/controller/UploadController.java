@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -49,17 +50,18 @@ public class UploadController {
     }
 
     @PostMapping("/folder")
-    public String insertFolder(@RequestParam("folder") MultipartFile folder, @RequestParam("path") String path) {
+    public String insertFolder(@RequestParam("folder") List<MultipartFile> folder, @RequestParam("path") String path) {
         String decodedPath = AppConfig.Url.decode(path);
 
-        String fileName = folder.getOriginalFilename();
+        String fileName = folder.get(0).getOriginalFilename();
         if (fileName == null || fileName.isEmpty()) {
             throw new RuntimeException("Файл должен содержать имя");
         }
 
-        filesAndFoldersChecker.checkFolderNameOrThrow(decodedPath, fileName);
+        filesAndFoldersChecker.checkFolderNameOrThrow(decodedPath, folder.get(0).getOriginalFilename());
 
         // folder service -> insert folder
+//        folderService.insert(folder, decodedPath);
 
         return path.isEmpty() ? "redirect:/storage" : "redirect:/storage/my/" + AppConfig.Url.cross(decodedPath);
     }

@@ -1,17 +1,17 @@
 package matveyodintsov.cloudfilestorage.service;
 
 import matveyodintsov.cloudfilestorage.config.security.SecurityUtil;
+import matveyodintsov.cloudfilestorage.models.FileEntity;
 import matveyodintsov.cloudfilestorage.models.FolderEntity;
 import matveyodintsov.cloudfilestorage.models.UserEntity;
 import matveyodintsov.cloudfilestorage.repository.FolderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 @Service
 public class FolderService {
@@ -30,6 +30,36 @@ public class FolderService {
     public InputStream download(String folderPath) {
         return cloudService.downloadFolder(folderPath);
     }
+
+//    @Transactional
+//    public void insert(List<MultipartFile> files, String path) {
+//        Set<String> createdFolders = new HashSet<>();
+//
+//        for (MultipartFile file : files) {
+//            String originalPath = file.getOriginalFilename();
+//            String[] pathSegments = originalPath.split("/");
+//            String fileName = pathSegments[pathSegments.length - 1];
+//
+//            String currentPath = path;
+//            String currentFolder = null;
+//
+//            for (int i = 0; i < pathSegments.length - 1; i++) {
+//                currentFolder = pathSegments[i];
+//                String newPath = currentPath + currentFolder + "/";
+//
+//                if (!createdFolders.contains(newPath)) {
+//                    create(currentPath, currentFolder);
+//                    createdFolders.add(newPath);
+//                }
+//                currentPath = newPath;
+//            }
+//
+//            //todo: придумать как создать файл, нельзя создать fileService
+//
+//            cloudService.insertFile(file, currentPath + fileName);
+//        }
+//
+//    }
 
     @Transactional
     public void create(String path, String folderName) {
