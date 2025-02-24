@@ -72,7 +72,8 @@ public class CloudService {
                  ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(fos))) {
 
                 for (String filePath : filePaths) {
-                    addFileToZip(filePath, zipOut, new File(filePath).getName());
+                    String relativePath = filePath.substring(filePath.indexOf("/") + 1);
+                    addFileToZip(filePath, zipOut, relativePath);
                 }
             }
             return new FileInputStream(zipFile);
@@ -98,7 +99,7 @@ public class CloudService {
                     }
 
                     String relativePath = objectPath.substring(folderPath.length());
-                    addFileToZip(folderPath, zipOut, relativePath);
+                    addFileToZip(objectPath, zipOut, relativePath);
                 }
             }
             return new FileInputStream(zipFile);
@@ -110,7 +111,6 @@ public class CloudService {
     private void addFileToZip(String filePath, ZipOutputStream zipOut, String zipEntryName) {
         try (InputStream fileStream = cloudRepository.getObject(filePath)) {
             zipOut.putNextEntry(new ZipEntry(zipEntryName));
-
             fileStream.transferTo(zipOut);
             zipOut.closeEntry();
         } catch (Exception e) {
@@ -121,5 +121,4 @@ public class CloudService {
     private String currentUserFolder(String folderPath) {
         return SecurityUtil.getSessionUser() + "/" + folderPath;
     }
-
 }
